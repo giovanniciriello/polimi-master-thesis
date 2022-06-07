@@ -12,19 +12,19 @@
     The \textit{\textbf{Automatic Identification System}} (AIS) is an automatic tracking system widely used by \textit{Vessel Traffic Services} (VTS). AIS is crucial in order to grant safety and security in maritime operations.
     It bases its operation on a transceiver on ships that sends data to others receivers or to satellites.
     
-    AIS information includes a variety of data regarding the real-time status of a ship during a voyage, e.g. its unique identifier, position, ship status, and speed. This information is very useful when displayed on the screen of a \textit{Electronic Chart Display and Information System}. (ECDIS)
+    AIS information includes a variety of data regarding the real-time status of a ship during a voyage, e.g. its unique identifier, position, ship status, and speed. This information is very useful when displayed on the screen of a \textit{Electronic Chart Display and Information System} (ECDIS).
     
-    The \textit{International Maritime Organization} (IMO) requires AIS system to be installed on board ships of 300 gross tonnage (a nonlinear measure of a ship's overall internal volume) or more, cargo ships of 500 gross tonnage and all passenger ships, regardless of size \cite{ais_regulations}.
+    The \textit{International Maritime Organization} (IMO) requires AIS system to be installed on board ships of 300 gross tonnage (i.e. a nonlinear measure of a ship's overall internal volume) or more, cargo ships of 500 gross tonnage and all passenger ships, regardless of size \cite{ais_regulations}.
     
     According to the current regulations AIS systems should:
     \begin{itemize}
         \item Automatically relay information - including vessel identity, type, position, course, speed, navigational status, and other safety-related information
         \item Automatically receive such information from similarly equipped vessels; 
-        \item Monitor and track ships
+        \item Monitor and track ships;
         \item Exchange data with coast facilities.
     \end{itemize}
 
-    Despite the strict regulations in place on AIS systems, for a variety of reasons, ships may turn off their AIS transceivers.
+    Despite the strict regulations in place on AIS systems, for a variety of reasons, ships may turn off their AIS transceivers or, much more frequently, technical errors may occur that affect the continuity of the reception of AIS messages.
     
     \subsection{A focus on Satellite AIS}
     AIS is designed to assist a ship's watch-keeping officers and to enable maritime authorities to track and monitor ship movements. AIS integrates a standardized VHF (Very High Frequency) transceiver with a positioning system, with other electronic navigation sensors, such as a gyrocompass or rate-of-turn indicator. Vessels equipped with AIS transceivers can be tracked by AIS base stations along coastlines or, when out of range of terrestrial networks, via a high number of satellites equipped with specialized AIS receivers. 
@@ -124,22 +124,22 @@
             Subcategory of vessel. Possible options:\\ 'Crude Oil Tanker' nan 'Lng Tanker' 'Pusher Tug' 'Research Vessel' 'Offshore Tug Supply Ship' 'Hopper Dredger' 'Refrigerated Cargo Ship' 'Dredger' 'Utility Vessel' 'Chemical Oil Products Tanker' 'Oil Products Tanker' 'Cruise Ship' 'Crane Ship' 'Icebreaker' 'Offshore Support Vessel' 'Nuclear Fuel Carrier' 'Landing Craft' 'Sailing Vessel' 'Patrol Vessel' 'Fish Carrier' 'Salvage Ship' 'Drilling Ship' 'Fish Factory Ship' 'Chemical Tanker' 'Fishing Support Vessel' 'Live Fish Carrier' 'Asphalt Bitumen Tanker'.
         \subsubsection{Message Type}
             A numeric code that identifies the message type.
-        
-    \subsection{Data usage}
     
     % https://en.wikipedia.org/wiki/Automatic_identification_system#cite_note-1:~:text=External%20links-,Viewing%20and%20using%20AIS%20data,-%5Bedit%5D
     
     
-\newpage  
+\clearpage  
 
 \section{Anomaly Detection Techniques}
 
     \textbf{Anomaly detection} is a branch in data mining that identifies event or observations that deviate from the normal behavior of a data set \cite{anomaly_detection}. Anomaly detection is applicable in a very large number and variety of domains and that makes it so widely used.
     \\
-    Anomalous data can indicate critical incidents, such as a technical malfunction, or potential opportunities, such as changing consumer behavior. Machine learning is increasingly being used to automate anomaly detection.
+    Anomalous data can indicate critical incidents, such as a technical malfunction, or potential opportunities, such as changing consumer behavior. Machine learning techniques are increasingly being used to automate anomaly detection.
     
     \subsection{Time Series}
-    The starting point for a well-functioning anomaly detection algorithm is the analysis of time series. These are sequences of values over time. This means that each entry in the data set can be viewed as a pair of two elements: a timestamp for when the metric was measured, and the set of values associated with that metric at that time. 
+    The starting point for a well-functioning anomaly detection algorithm is the analysis of time series.
+    \\
+    Time series are sequences of values over time. This means that each entry in the data set can be viewed as a pair of two elements: a timestamp for when the metric was measured, and the set of values associated with that metric at that time. 
     \\ 
     Time series data should not be viewed as a projection of the data set; rather, it contains the information necessary to make fairly accurate guesses about what to expect in the future. Anomaly detection systems use these expectations to identify actionable signals in your data and detect outliers that indicate certain relevant events in your business.
     
@@ -147,10 +147,27 @@
     In the maritime application domain of anomaly detection, the just mentioned time series are sequences of AIS messages containing the whole set of various parameters representing the state of the ship, i.e. real-time information collected on board a ship by numerous sensors (such as GPS locator, accelerometer, gyroscope, etc.). 
     In S-AIS (Satellite AIS) data, messages are sent to satellites at an average frequency of thirty seconds, but this can be varied depending on ship speed or base station instructions. 
     \\
-    The described time serie represent a trajectory of a ship defined as a finite sequence of positions of the ship received in chronological order. The problem of packet collisions mentioned leads to a lack of data in the sequence. Thus, such a data point corresponds to a multi-dimensional feature vector of the moving ship at a particular time, and the packet collision problem introduces noise or lack of data.
+    The described time series represent the trajectories of the ships, each of them could be defined as a finite sequence of positions of the ship received in chronological order. The problem of packet collisions mentioned leads to a lack of data in the sequence. Thus, such a data point corresponds to a multi-dimensional feature vector of the moving ship at a particular time, and the packet collision problem introduces noise or lack of data.
 
-    \subsection{Clustering}
-    % parlare di cosa è il clustering, diversi tipi di clustering e k-means e introdurre DBSCAN
+    \subsection{Clustering Techniques Overview}
+    In the field of data analysis, the general task of dividing data points into groups such that the data points in the same groups are more similar to other data points in the same group than those in other groups is called \textbf{clustering} \cite{clustering}.
+    \\
+    As first important classification, clustering is defined:
+    
+    \begin{itemize}
+    \item \textbf{Hard Clustering} when each data point either belongs entirely to a cluster or does not.
+    \item \textbf{Soft Clustering} each data point is not placed in a separate cluster, but is assigned a probability of being included in those clusters.
+    \end{itemize}
+    \\
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=9cm]{Images/1/clustering.png}
+        \caption{Visualization of hard clustering technique}
+    \end{figure}
+        
+    
+    There are more than 100 known clustering algorithms, and each method follows a different set of rules for defining similarity between data points. But the class of clustering algorithms that is highlighted in this work is \textbf{density-based clustering algorithms}. These models search the data space for regions of varying density of data points in the data space. It isolates different regions of varying density and assigns the data points within those regions to the same cluster. Popular examples of density models include DBSCAN and OPTICS.
+    
     
     \subsection{DBSCAN}
     \textbf{Density-based spatial clustering of Applications with Noise} (DBSCAN) is an algorithm for clustering data based on density.

@@ -15,8 +15,7 @@ The first step was data cleaning of the original data to avoid syntactic errors 
         This would have made it difficult to assign the message to a specific ship and thus to a voyage. Messages with the value '0' as \verb|mmsi| (the ship identifier used in this work) and with 'UNAVAILABLE' as \verb|vessel_name| were accordingly removed before we proceeded to the next steps.
         
         \item Messages with coordinates that correspond to land and not to a maritime area.
-        In order to properly achieve this goal, the python packages \underline{\href{https://scitools.org.uk/cartopy/docs/latest/}{cartopy}} by scitools and \underline{\href{https://shapely.readthedocs.io/en/stable/manual.html}{shapely}} has been used to detect anomaly coordinates to remove them from the data set.
-        
+        In order to properly achieve this goal, the python packages cartopy \cite{cartopy} by scitools and shapely \cite{shapely} has been used to detect anomaly coordinates to remove them from the data set.
         
         \begin{minipage}{\linewidth}
         \begin{lstlisting}[language=Python]
@@ -107,7 +106,6 @@ def is_land(msg):
     \item The arrival of a message with a change in the status of the ship to "moored". If the ship moors in a port but departs before \verb|SEGMENTS_MAX_DELTA_SECONDS| seconds have elapsed, the script considers two different trips that must be analyzed separately
     \end{itemize}
     \\
-    
     \begin{minipage}{\linewidth}
     \begin{lstlisting}[language=Python]
 coords = []
@@ -177,7 +175,7 @@ duration = max(ts_arr) - min(ts_arr)
         
     \subsubsection{delay}
     
-        Il ritardo maturato da una nave durante un viaggio potrebbe essere un ottimo parametro per evidenziare un'anomalia. Quest'ultimo viene calcolato grazie alla presenza del parametro eta (Estimated Time of Arrival) presente in ogni messaggio. A questo scopo si prende come riferimento il primo messaggio, quindi:
+        The delay accrued by a ship during a voyage could be a good parameter to highlight an anomaly. The latter is calculated by the presence of the parameter eta (Estimated Time of Arrival) parameter in each message. For this purpose, the first message is taken as reference, thus:
         
         \begin{lstlisting}[language=Python, frame=none]
 delay = trip_msgs[0]['eta'] - duration
@@ -206,11 +204,47 @@ mean_sog = np.array([x['cog'] for x in going_msgs]).mean()
     \end{lstlisting} 
     
     \subsubsection{going\_time}
+    The time the ship spent in the \textit{Under Way Using Engine} state during its voyage can be estimated by summing the delta time frames of each message recorded in that state compared to the immediately preceding message. If a ship has slowed down and spent less time navigating than expected, this feature can highlight that.
     
-    
+    \begin{lstlisting}[language=Python, frame=none]
+going_time = 0
+for i, msg  in enumerate(trip_msgs):
+    # The "Under Way Using Engine" has 5 as status code 
+    if msg['nav_status_code'] == 5 and i < len(trip_msgs)-1:
+        going_time += trip_msgs[i+1]['timestamp'] - msg['timestamp']
+    \end{lstlisting} 
+
     
     \subsubsection{ideal\_distance}
+    
+    The ideal distance feature is closely related to the coordinates of the departure and arrival points. It measures the distance in kilometers as the crow flies from the departure point to the arrival point. This could be useful in figuring out if the ship took some unmotivated detour instead of going straight to the destination.
+    \\
+    The calculation required the use of geopy \cite{geopy} library.
+    
+    \begin{lstlisting}[language=Python, frame=none]
+ideal_distance =
+    geopy.distance.distance(
+        (start_lat, start_lon),
+        (end_lat, end_lon)
+    ).km
+    \end{lstlisting} 
+    
     \subsubsection{actual\_distance}
+    
+    The effective distance, in contrast to the previous one, measures the actual kilometers covered by the ship during its voyage. The calculation of this value is only possible by approximating the actual distance with the sum of the length of the different segments bounded by the arrival of each message.
+    
+    Also here the geopy \cite{geopy} library was required.
+        
+    \begin{lstlisting}[language=Python, frame=none]
+actual_distance = 0
+for i, g  in enumerate(trip_msgs):
+    if i < len(trip_msgs)-1:
+        actual_distance += 
+            geopy.distance.distance(
+                (trip_msgs[i]['lat'], trip_msgs[i]['lon']),
+                (trip_msgs[i+1]['lat'], trip_msgs[i+1]['lon'])
+            ).km
+    \end{lstlisting} 
 
 \clearpage
 \section{DBSCAN Clustering and Anomaly Detection}
