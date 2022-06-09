@@ -169,7 +169,7 @@ if len(rows) > 1:
     
         This feature indicates the duration of the trip. Let \verb|ts_arr| be the array containing the timestamps of each message belonging to the trip. Duration in seconds is calculated as below:
         
-        \begin{lstlisting}[language=Python, frame=none]
+        \begin{lstlisting}[language=Python]
 duration = max(ts_arr) - min(ts_arr)
         \end{lstlisting}
         
@@ -177,7 +177,7 @@ duration = max(ts_arr) - min(ts_arr)
     
         The delay accrued by a ship during a voyage could be a good parameter to highlight an anomaly. The latter is calculated by the presence of the parameter eta (Estimated Time of Arrival) parameter in each message. For this purpose, the first message is taken as reference, thus:
         
-        \begin{lstlisting}[language=Python, frame=none]
+        \begin{lstlisting}[language=Python]
 delay = trip_msgs[0]['eta'] - duration
         \end{lstlisting} 
         
@@ -187,9 +187,9 @@ delay = trip_msgs[0]['eta'] - duration
         
     \subsubsection{mean\_sog}
     
-    As explained in the Data Description section, \textbf{sog} (Speed Over Ground) indicates the speed of the ship during its voyage. In order to point out anomalies such as excessive deceleration, this feature has been added and calculated as follows:
+    As explained in the Annex 1 - AIS Data Description, \textbf{sog} (Speed Over Ground) indicates the speed of the ship during its voyage. In order to point out anomalies such as excessive deceleration, this feature has been added and calculated as follows:
     
-    \begin{lstlisting}[language=Python, frame=none]
+    \begin{lstlisting}[language=Python]
 mean_sog = np.array([x['sog'] for x in going_msgs]).mean()
     \end{lstlisting} 
     
@@ -199,14 +199,14 @@ mean_sog = np.array([x['sog'] for x in going_msgs]).mean()
     
     The message parameter \textbf{cog}, which indicates the actual direction of motion taking into account compensation for wind and other flow forces, was chosen as trip feature because the average of this value over the entire trip might reveal some anomalies in the trajectory with respect to other similar trips.
     
-    \begin{lstlisting}[language=Python, frame=none]
+    \begin{lstlisting}[language=Python]
 mean_sog = np.array([x['cog'] for x in going_msgs]).mean()
     \end{lstlisting} 
     
     \subsubsection{going\_time}
     The time the ship spent in the \textit{Under Way Using Engine} state during its voyage can be estimated by summing the delta time frames of each message recorded in that state compared to the immediately preceding message. If a ship has slowed down and spent less time navigating than expected, this feature can highlight that.
     
-    \begin{lstlisting}[language=Python, frame=none]
+    \begin{lstlisting}[language=Python]
 going_time = 0
 for i, msg  in enumerate(trip_msgs):
     # The "Under Way Using Engine" has 5 as status code 
@@ -221,7 +221,7 @@ for i, msg  in enumerate(trip_msgs):
     \\
     The calculation required the use of geopy \cite{geopy} library.
     
-    \begin{lstlisting}[language=Python, frame=none]
+    \begin{lstlisting}[language=Python]
 ideal_distance =
     geopy.distance.distance(
         (start_lat, start_lon),
@@ -235,7 +235,7 @@ ideal_distance =
     
     Also here the geopy \cite{geopy} library was required.
         
-    \begin{lstlisting}[language=Python, frame=none]
+    \begin{lstlisting}[language=Python]
 actual_distance = 0
 for i, g  in enumerate(trip_msgs):
     if i < len(trip_msgs)-1:
@@ -244,8 +244,54 @@ for i, g  in enumerate(trip_msgs):
                 (trip_msgs[i]['lat'], trip_msgs[i]['lon']),
                 (trip_msgs[i+1]['lat'], trip_msgs[i+1]['lon'])
             ).km
-    \end{lstlisting} 
+    \end{lstlisting}
 
 \clearpage
-\section{DBSCAN Clustering and Anomaly Detection}
-    
+\section{DBSCAN Clustering}
+
+Now that the preliminary steps are complete, we can move on to the core phase of data analysis: \clustering using the DBSCAN algorithm.
+\\
+Let us first describe the Python libraries that were essential for our work:
+\begin{itemize}
+\item \textit{numpy} \cite{numpy} which is needed for all operations based on scientific computation;
+\item \textit{pandas} \cite{pandas} which is a pillar for data analysis and manipulation;
+\item \textit{scikit learn} \cite{sklearn} which provides several easy-to-implement machine learning tools;
+\item \textit{matplotlib} \cite{matplotlib} and \textit{seaborn} \cite{seaborn} for data visualization.
+\end{itemize}
+
+Let \verb|df| (\textit{DataFrame}) be the container of all previously computed features. A table-like structure where each row is a trip and the columns are represented by the selected features.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\textbf{min lat}  & \textbf{max lat}  & \textbf{...}  & \textbf{delay}     & \textbf{mean sog} & \textbf{mean cog}  & \textbf{going time} & \textbf{ideal dist}  \\
+\hline
+66.640 & 66.648 & ... & 9038337 & 0.227  & 218.476 & 83663 & 9.157         \\
+68.117 & 73.138 & ... & 8949470 & 8.025  & 128.487 & 172530 & 533.221       \\
+66.629 & 67.830 & ... & 9036649 & 3.527  & 147.169 & 85351 & 135.627       \\
+72.544 & 72.779 & ... & 9213950 & 7.296  & 103.688 & 28050 & 95.251        \\
+66.640 & 68.098 & ... & 9036361 & 4.382  & 89.9779 & 85639 & 167.403      \\
+\hline
+\end{tabular}
+\caption{Example of trip features dataframe}
+\end{table}
+
+\subsection{Correlation Matrix}
+
+This phase begins with the calculation of the correlation matrix. Using the Pearson correlation index \verb|[-1,1]|, we can see how much the variables explain each other, or more precisely, how strongly one variable is correlated with another.
+
+A correlation of 1 indicates that two variables are perfectly correlated, while a correlation of -1 indicates that two variables are inversely correlated. Values close to 0 indicate that the two variables are not correlated at all.
+
+\begin{lstlisting}[language=Python]
+df.corr()
+\end{lstlisting}
+
+In addition a heatmap to interpret the correlation matrix more quickly was used
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm]{Images/1/heatmap.png}
+    \caption{Example of trip features correlation heatmap}
+\end{figure}
+
