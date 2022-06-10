@@ -48,7 +48,7 @@ def is_land(msg):
         
         \begin{figure}[H]
             \centering
-            \includegraphics[width=9cm]{Images/land-points.png}
+            \includegraphics[width=9cm]{Images/2/land-points.png}
             \caption{Presence of wrong vessel coordinates on land}
         \end{figure}
         
@@ -59,9 +59,10 @@ def is_land(msg):
         
     In addition, some normalization work was done on the data set.
     \\
-    At the moment, all the information about the ship from which the message arrived is contained in the message record. This setting, in addition to weighing down the dataset considerably due to a huge amount of redundant data (12 fields out of 33 contain information about the ship and not the message) opens the possibility of inconsistent information.
+    At the moment, all the information about the ship from which the message arrived is contained in the message record. This setting, in addition to weighing down the data set considerably due to a huge amount of redundant data (12 fields out of 33 contain information about the ship and not the message) opens the possibility of inconsistent information.
     \\
     
+    \begin{table}[H]
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
             \textbf{index} & \textbf{imo} & \textbf{vessel\_name} & \textbf{callsign} & \textbf{vessel\_type} & \textbf{vessel\_class} \\
@@ -70,6 +71,8 @@ def is_land(msg):
             \textbf{5086} & 9120293      & KAPITAN BACHURIKHIN   & UDIZ              & Fishing               & \textcolor{red}{A}      \\
         \hline
     \end{tabular}
+    \caption{Example of data inconsistencies in the data set}
+    \end{table}
     \\
     
     Above there is an example of data inconsistency messages 5085 and 5086 comes both from the same vessel but the class registered is different.
@@ -80,6 +83,7 @@ def is_land(msg):
     
     \bigbreak
     
+    \begin{table}[H]
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
             \textbf{index} & \textbf{imo} & \textbf{vessel\_name} & \textbf{callsign} & \textbf{vessel\_type} & \textbf{vessel\_class} \\
@@ -88,6 +92,8 @@ def is_land(msg):
             \textbf{31699} & 66550      & \textcolor{red}{OTA-883}   & UDIZ              & Reserved               & A      \\
         \hline
     \end{tabular}
+    \caption{Example of syntactic errors in the data}
+    \end{table}
 
 \clearpage
 \section{Trip Generation}
@@ -291,7 +297,7 @@ In addition a heatmap to interpret the \textbf{correlation matrix} more quickly 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=17cm]{Images/1/heatmap.png}
+    \includegraphics[width=17cm]{Images/2/heatmap.png}
     \caption{Example of trip features correlation heatmap}
 \end{figure}
 
@@ -307,7 +313,7 @@ We visualize these pairs of variables through \textbf{scatterplots} to confirm w
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=16cm]{Images/1/scatterplots.png}
+    \includegraphics[width=16cm]{Images/2/scatterplots.png}
     \caption{Example of scatterplots with strongly, inversely and weakly correlated features}
 \end{figure}
 
@@ -328,7 +334,7 @@ scaled_df = pd.DataFrame( scaled_array, columns = cleaned_df.columns )
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=16cm]{Images/1/boxplot.png}
+    \includegraphics[width=16cm]{Images/2/boxplot.png}
     \caption{Example of boxplot of the trip features after standardization}
 \end{figure}
 
@@ -363,6 +369,7 @@ Since DBSCAN is an unsupervised model it does not enjoy any metrics to calculate
 This chapter is only about understanding how to perform the search for hyperparameters, and then explain how the correct parameters were selected in the chapter on testing.
 This requires observing how the metrics change as a function of selected hyperparameters. We define the hyperparameters set to be tested:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Python]
 eps_to_test = [round(eps,1) for eps in np.arange(0.1, 2, 0.1)]
 min_samples_to_test = range(5, 50, 5)
@@ -370,17 +377,17 @@ min_samples_to_test = range(5, 50, 5)
 print("EPS:", eps_to_test)
 print("MIN_SAMPLES:", list(min_samples_to_test))
 \end{lstlisting}
+\end{minipage}
 
+Let \verb|get_metrics| be a function that receives as input the iterated parameters $\varepsilon$ and \textbf{n}, performs the DBSCAN clustering algorithm, and returns the number of trips considered as outliers and the number of clusters obtained to have all the information in a single data structure and to be able to evaluate the best combination of parameters.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Python]
 iter = 0
 for eps in eps_to_test:
     for min_samples in min_samples_to_test:
-        
         iter += 1
-
         # Calculating the metrics
-        noise_metric, cluster_metric = get_metrics(eps, min_samples, scaled_df, iter_)
+        noise_metric, cluster_metric = get_metrics(eps, min_samples, scaled_df, iter)
 \end{lstlisting}
 \end{minipage}

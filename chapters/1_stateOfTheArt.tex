@@ -2,7 +2,28 @@
 
 \section{The context}
 
-    ...
+    \subsection{The ARCOS Project}
+    \textbf{ARCOS} (ARCtic Observatory for Copernicus SEA Security Service) is an EU-funded project (specifically from the \textit{European Union’s Horizon 2020 research and innovation programme}) whose goal is to design and implement an early warning system that provides continuous monitoring of the \textbf{Arctic region} \cite{arcos}. 
+    
+    Designed to create actionable security products by processing and merging multi-sensor data, the ARCOS system integrates information available space, non-space sources and products available from Copernicus Services \cite{copernicus}. 
+    
+    The project system ARCOS handle information at three different levels of scale and user interaction:
+    
+    \begin{enumerate}
+    \item \textbf{Automatic early-warning system}: Integration of multi-channel data sources with the goal of triggering alerts in the region when certain conditions are met. Automatic early warnings are generated when anomalous behaviours are detected, such as the discovery of suspicious targets or large-scale exploitation of natural resources.
+    
+    \item \textbf{User Driven Alert System} by providing user guidance on the specific location and type of observation objects desired, alarms can be configured based on more specific information, such as activity patterns.
+    
+    \item \textbf{Geospatial Intelligence Products}. Thanks to the warnings previously generated, geospatial intelligence products requiring human intervention are provided at the user's request. These products require extensive contextual analysis, typically requiring coordinated action at more than one location.
+    \end{enumerate}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=13cm]{Images/1/arcos-design.png}
+        \caption{ARCOS Project platform design \cite{arcos}}
+    \end{figure}
+        
+
     
 \newpage
 \section{The AIS Data}
@@ -69,6 +90,7 @@
     \item \textbf{Soft Clustering} each data point is not placed in a separate cluster, but is assigned a probability of being included in those clusters.
     \end{itemize}
     \\
+    
     \begin{figure}[H]
         \centering
         \includegraphics[width=9cm]{Images/1/clustering.png}
