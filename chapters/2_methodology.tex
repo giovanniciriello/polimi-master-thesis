@@ -277,7 +277,7 @@ Let \verb|df| (\textit{DataFrame}) be the container of all previously computed f
 \caption{Example of trip features dataframe}
 \end{table}
 
-\subsection{Correlation Matrix}
+\subsection{Trip features correlation Analysis}
 
 This phase begins with the calculation of the correlation matrix. Using the Pearson correlation index \verb|[-1,1]|, we can see how much the variables explain each other, or more precisely, how strongly one variable is correlated with another.
 
@@ -287,7 +287,7 @@ A correlation of 1 indicates that two variables are perfectly correlated, while 
 df.corr()
 \end{lstlisting}
 
-In addition a heatmap to interpret the correlation matrix more quickly was used
+In addition a heatmap to interpret the \textbf{correlation matrix} more quickly was used.
 
 \begin{figure}[H]
     \centering
@@ -295,3 +295,92 @@ In addition a heatmap to interpret the correlation matrix more quickly was used
     \caption{Example of trip features correlation heatmap}
 \end{figure}
 
+After doing this, we can plot graphs to highlight the correlation between some features
+
+We can immediately say that the variables \textbf{end\_lat} and \textbf{max\_lat} are strongly correlated (correlation close to 1), as well as for all coordinate pairs.
+
+In contrast \textbf{mean\_sog} and \textbf{duration} are slightly inversely correlated (correlation less than 0).
+
+In contrast, variables such as \textbf{end\_lat} and \textbf{mean\_cog} are weakly correlated (correlation close to 0).
+
+We visualize these pairs of variables through \textbf{scatterplots} to confirm what we observed:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=16cm]{Images/1/scatterplots.png}
+    \caption{Example of scatterplots with strongly, inversely and weakly correlated features}
+\end{figure}
+
+\subsection{Trip features standardization}
+
+In order to further clean our data before core processing in the clustering phase, this methodology includes removing rows with missing values, i.e., trips that do not contain enough information to compute some features.
+
+After that, a necessary step is the standardization of the data set to avoid problems related to the different scaling of variables in practice.
+
+\textbf{Boxplots} are charts that allow us to visualize the distribution of several variables at the same time, in order to verify they are all on the same scale after the normalization.
+
+\begin{lstlisting}[language=Python]
+cleaned_df = df.dropna()
+scaler = StandardScaler()
+scaled_array = scaler.fit_transform(cleaned_df)
+scaled_df = pd.DataFrame( scaled_array, columns = cleaned_df.columns )
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=16cm]{Images/1/boxplot.png}
+    \caption{Example of boxplot of the trip features after standardization}
+\end{figure}
+
+
+\subsection{DBSCAN implementation}
+The DBSCAN is a clustering algorithm that belongs to the category of so-called density-based algorithms, since it only identifies regions of the feature space where the density of points (or observations) is greater.
+
+All observations that are close to each other are grouped into a cluster. Those that appear isolated are referred to as noise.
+
+As mentioned earlier the DBSCAN needs two \textbf{parameters}:
+
+\begin{itemize}
+\item $\varepsilon$ which corresponds to the distance within which to search for neighboring points;
+\item \textit{n} which corresponds to the minimum number of points in order to compose a cluster.
+\end{itemize}
+
+For the sake of brevity we can say that the DBSCAN does nothing more than search for all those clusters whose points are greater than or equal to a number less than $\varepsilon$.
+
+Just as very first step, we give the two parameters an arbitrary value and analyze the results by measuring the number of clusters and the significance of outliers during the hyperparameter phase.
+
+\begin{lstlisting}[language=Python]
+dbscan_model = DBSCAN(eps = 0.75, min_samples = 5)
+dbscan_model.fit(scaled_df)
+\end{lstlisting}
+
+The DBSCAN clustering algorithm has been implemented and within \verb|dbscan_model| we will find all the information regarding the clusters created and the trips considered as \textbf{outliers}. In the testing chapter, we will take a more in-depth look at how to reveal from outliers by applying this methodology to a real data set.
+
+\subsection{Searching for hyperparameters}
+
+Since DBSCAN is an unsupervised model it does not enjoy any metrics to calculate its accuracy.
+
+This chapter is only about understanding how to perform the search for hyperparameters, and then explain how the correct parameters were selected in the chapter on testing.
+This requires observing how the metrics change as a function of selected hyperparameters. We define the hyperparameters set to be tested:
+
+\begin{lstlisting}[language=Python]
+eps_to_test = [round(eps,1) for eps in np.arange(0.1, 2, 0.1)]
+min_samples_to_test = range(5, 50, 5)
+
+print("EPS:", eps_to_test)
+print("MIN_SAMPLES:", list(min_samples_to_test))
+\end{lstlisting}
+
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=Python]
+iter = 0
+for eps in eps_to_test:
+    for min_samples in min_samples_to_test:
+        
+        iter += 1
+
+        # Calculating the metrics
+        noise_metric, cluster_metric = get_metrics(eps, min_samples, scaled_df, iter_)
+\end{lstlisting}
+\end{minipage}
