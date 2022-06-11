@@ -1,32 +1,51 @@
 \chapter{State of the Art}
+\label{ch:stateOfTheArt}
 
-\section{The context}
+\section{Overview}
 
-    \subsection{The ARCOS Project}
-    \textbf{ARCOS} (ARCtic Observatory for Copernicus SEA Security Service) is an EU-funded project (specifically from the \textit{European Union’s Horizon 2020 research and innovation programme}) whose goal is to design and implement an early warning system that provides continuous monitoring of the \textbf{Arctic region} \cite{arcos}. 
+This thesis was carried out in connection with the EU-funded \textbf{ARCOS project} which has, among other objectives,  to develop mechanisms for pro-active intelligence generation based on an early warning system.
+
+This chapter is intended to provide the reader with some basic knowledge of the maritime domain, the data standard used and the techniques used for anomaly detection in order to better understand the methodology described in Chapter \ref{ch:methodology} and the results obtained in the testing phase in Chapter \ref{ch:testing}
+
+The section \ref{sec:arcos} briefly introduces \textbf{ARCOS}: the company with which this work is associated, the objectives of its project, and the methods it uses to achieve its goals.
+
+The \ref{sec:ais} section describes the \textbf{AIS data}, the standard currently used for the interchange of maritime information between ships and between ships and satellites. It also explains the data sent to the satellites, the origin of some of the problems with this system, and the importance of anomaly detection in this field. 
+
+In the \ref{sec:anomaly} section, basic techniques are presented that help in a general sense to detect anomalies in a data set. \textbf{Clustering technique}s are explored, in particular one based on spatial density: DBSCAN, which is applied precisely to AIS data.
+
+\clearpage
+\section{The ARCOS Project}
+\label{sec:arcos}
+\textbf{ARCOS} (ARCtic Observatory for Copernicus SEA Security Service) is an EU-funded project (specifically from the \textit{European Union’s Horizon 2020 research and innovation programme}) whose goal is to design and implement an early warning system that provides continuous monitoring of the \textbf{Arctic region} \cite{arcos}. 
+
+Designed to create actionable security products by processing and merging multi-sensor data, the ARCOS system integrates information available space, non-space sources and products available from Copernicus Services \cite{copernicus}. 
+
+The project system ARCOS handle information at three different levels of scale and user interaction:
+
+\begin{enumerate}
+\item \textbf{Automatic early-warning system}: Integration of multi-channel data sources with the goal of triggering alerts in the region when certain conditions are met. Automatic early warnings are generated when anomalous behaviours are detected, such as the discovery of suspicious targets or large-scale exploitation of natural resources.
+
+\item \textbf{User Driven Alert System} by providing user guidance on the specific location and type of observation objects desired, alarms can be configured based on more specific information, such as activity patterns.
+
+\item \textbf{Geospatial Intelligence Products}. Thanks to the warnings previously generated, geospatial intelligence products requiring human intervention are provided at the user's request. These products require extensive contextual analysis, typically requiring coordinated action at more than one location.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=13cm]{Images/1/arcos-design.png}
+    \caption{ARCOS Project platform design \cite{arcos}}
+\end{figure}
     
-    Designed to create actionable security products by processing and merging multi-sensor data, the ARCOS system integrates information available space, non-space sources and products available from Copernicus Services \cite{copernicus}. 
-    
-    The project system ARCOS handle information at three different levels of scale and user interaction:
-    
-    \begin{enumerate}
-    \item \textbf{Automatic early-warning system}: Integration of multi-channel data sources with the goal of triggering alerts in the region when certain conditions are met. Automatic early warnings are generated when anomalous behaviours are detected, such as the discovery of suspicious targets or large-scale exploitation of natural resources.
-    
-    \item \textbf{User Driven Alert System} by providing user guidance on the specific location and type of observation objects desired, alarms can be configured based on more specific information, such as activity patterns.
-    
-    \item \textbf{Geospatial Intelligence Products}. Thanks to the warnings previously generated, geospatial intelligence products requiring human intervention are provided at the user's request. These products require extensive contextual analysis, typically requiring coordinated action at more than one location.
-    \end{enumerate}
-    
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=13cm]{Images/1/arcos-design.png}
-        \caption{ARCOS Project platform design \cite{arcos}}
-    \end{figure}
-        
 
     
-\newpage
-\section{The AIS Data}
+\clearpage
+
+
+\clearpage
+
+\clearpage
+\section{AIS Data}
+\label{sec:ais}
     \subsection{Introduction}
     The \textit{\textbf{Automatic Identification System}} (AIS) is an automatic tracking system widely used by \textit{Vessel Traffic Services} (VTS). AIS is crucial in order to grant safety and security in maritime operations.
     It bases its operation on a transceiver on ships that sends data to others receivers or to satellites.
@@ -61,7 +80,13 @@
     
 \clearpage  
 
+
+\clearpage
+
+\clearpage
+
 \section{Anomaly Detection Techniques}
+\label{sec:anomaly}
 
     \textbf{Anomaly detection} is a branch in data mining that identifies event or observations that deviate from the normal behavior of a data set \cite{anomaly_detection}. Anomaly detection is applicable in a very large number and variety of domains and that makes it so widely used.
     \\
@@ -138,5 +163,54 @@
     
     % https://www.youtube.com/watch?v=4b5d3muPQmA
     
-    \subsubsection{A pratical implementation example}
+    \subsubsection{A semplied implementation example}
     
+    Let us imagine a simplified use case to which to apply the \textbf{DBSCAN} clustering algorithm in order to understand how it works and what prerequisites it requires.
+    
+    Imagine that we measured the weight and height of a number of people and plotted them on a two-dimensional graph, with weight on the x-axis as the first dimension and height on the y-axis as the second dimension.
+    The dimensions used to describe the space in which the data points are to be represented are called \textbf{algorithm features} and must be carefully selected to obtain meaningful anomalies.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=11cm]{Images/1/dbscan-ex-1.png}
+        \caption{Data points represented in space based on their features}
+    \end{figure}
+    
+    As we can see by eye, we recognise two distinct clusters characterised by two relatively dense clumps. In contrast, these individuals, which are far away from all of them, look like outliers.
+    
+    In this simplified example, the two-dimensional chart uses only weight and height data. However, if we wanted to include four or more features, we would have to draw a four or more dimensional diagram, and that is not possible by eye. This is where DBSCAN,  comes in, which can identify nested clusters in multiple dimensions.
+    
+    DBSCAN identifies clusters by density of the points: clusters are in high density regions while outliers are in low density regions.
+    
+    The first thing the algorithm does is count the number of points that are near each point. For example, if we start with a random point and draw a circle around it, we can see that the orange circle at least partially overlaps eight other points. The radius of the orange circle is what is already defined as $\varepsilon$.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=11cm]{Images/1/dbscan-ex-2.png}
+        \caption{Random point with a $\varepsilon$-radius circle around embraces other points.}
+    \end{figure}
+    
+    Now we can do the same with all other points, defining each of them as a \textbf{core point} only if there are more than \textit{n} other points in the circle where it is the center and $\varepsilon$ is the radius (this is the second parameter to tune in a DBSCAN algorithm).
+    
+    So that, based on this simple classification we can label all data point as \textbf{core point} and \textbf{non-core points}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=11cm]{Images/1/dbscan-ex-3.png}
+        \caption{Core points and non-core points in DBSCAN visualization}
+    \end{figure}
+    
+    Now we randomly select a core point and assign it to the first cluster. Next, the core points that are near the first cluster (i.e., they overlap the circle) are all added to the first cluster. Then, the core points that are near the growing first cluster join it and expand it with other core points that are nearby.
+    At this point, every single point in the first cluster is a core point, and since we can not add any more core points to the first cluster, we add all non-core points that are near the core points to the first cluster.
+    
+    Of course core-points that are too far to the first cluster will create a separate ones.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=16cm]{Images/1/dbscan-ex-4.png}
+        \caption{Clustering process in DBSCAN algirthm}
+    \end{figure}
+    
+    Any remaining non-core points that are not close to core points in either cluster are not added to clusters and called \textbf{outliers}.
+    
+    The outliers are the actual result of a DBSCAN implementation. In this example, we may simply be talking about people who are too tall compared to the average, but properly applied to a more relevant data set, outlier detection can be much more meaningful.

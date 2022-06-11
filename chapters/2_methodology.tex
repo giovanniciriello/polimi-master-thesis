@@ -1,8 +1,9 @@
 \chapter{Methodology}
+\label{ch:methodology}
 
 Anomaly detection in datasets containing AIS messages, as performed in this work, follows several steps involving data engineering techniques such as data cleaning, data normalization, and data transformation.
 \\
-The first step was data cleaning of the original data to avoid syntactic errors in the data. Then, an algorithm capable of generating the "trip" entities from the individual messages was developed, since the trip is the selected entity for the clustering. In a third step, all numerical chosen features were associated with each trip in order to enable a distance-based clustering algorithm such as \textbf{DBScan}.
+The first step was data cleaning of the original data to avoid syntactic errors in the data. Then, an algorithm capable of generating the "trip" entities from the individual messages was developed, since the trip is the selected entity for the clustering. In a third step, all numerical chosen features were associated with each trip in order to enable a distance-based clustering algorithm such as \textbf{DBSCAN}.
 
 \section{Data cleaning and normalization}
     In order to better manage and detect anomalies, a data cleaning task was performed as preliminary steps.
