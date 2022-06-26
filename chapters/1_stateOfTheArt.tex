@@ -14,6 +14,7 @@ The \ref{sec:ais} section describes the \textbf{AIS data}, the standard currentl
 In the \ref{sec:anomaly} section, basic techniques are presented that help in a general sense to detect anomalies in a data set. \textbf{Clustering technique}s are explored, in particular one based on spatial density: DBSCAN, which is applied precisely to AIS data.
 
 \clearpage
+
 \section{The ARCOS Project}
 \label{sec:arcos}
 \textbf{ARCOS} (ARCtic Observatory for Copernicus SEA Security Service) is an EU-funded project (specifically from the \textit{European Union’s Horizon 2020 research and innovation programme}) whose goal is to design and implement an early warning system that provides continuous monitoring of the \textbf{Arctic region} \cite{arcos}. 
@@ -35,15 +36,11 @@ The project system ARCOS handle information at three different levels of scale a
     \includegraphics[width=13cm]{Images/1/arcos-design.png}
     \caption{ARCOS Project platform design \cite{arcos}}
 \end{figure}
-    
-
-    
-\clearpage
-
 
 \clearpage
 
 \clearpage
+
 \section{AIS Data}
 \label{sec:ais}
     \subsection{Introduction}
@@ -76,14 +73,34 @@ The project system ARCOS handle information at three different levels of scale a
     As a result, data belonging to different packets get mixed and it is not possible to recover the packet in its original form. As a result, important parts of messages from AIS are lost, so a considerable number of messages are not recognised and forwarded to a terrestrial part of the system. As a result, it is not possible to monitor part of the trajectory of ships \cite{dbscan_ais}.
     
     % https://en.wikipedia.org/wiki/Automatic_identification_system#cite_note-1:~:text=External%20links-,Viewing%20and%20using%20AIS%20data,-%5Bedit%5D
+
+    \subsection{Data Description}
+    
+    The AIS message standard provides for a rich collection of information collected on the ship. For the sake of brevity, only the information considered important in order to best understand the methodology described is described in this chapter. A complete documentation of the managed data fields can be found in appendix \ref{app:data-description}.
+    
+    
+    \begin{itemize}
+    \item \textbf{MMSI} (\textit{Maritime Mobile Service Identity}) is a nine-digit number identifying the vessel or boat. Since it is always present is the field that is most frequently used to identify a vessel
+    \item \textbf{Longitude} and \textbf{Latitude}: coordinates of the ship according to the geographic coordinate system
+    \item \textbf{SOG} (\textit{Speed over Ground}) is the speed of the vessel in one hour with respect to the land or any other fixed object such as buoys.
+    \item \textbf{COG} (\textit{Course Over Ground}) is the actual direction in degree of the motion considering the compensation for wind and current forces by changing the actual heading of the boat.
+    \item \textbf{Heading} is a parameter similar to COG, since it too measures the direction of a ship. The heading is the compass direction the boat is pointing, and it may not match COG if there are current and tidal effects. Heading is instantaneous, COG can be derived from boat's motion over time.
+    
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=10cm]{Images/appendices/cog-sog.png}
+        \caption{Schematic of speed over ground (SOG), course over ground (COG), ship heading (HDG), and rate of turn (ROT). Source: \cite{Inazu2020}}
+        \end{figure}
+        
+    \item \textbf{Nav Status}: the status of the vessel. Possible options in the complete data documntation in appendix \ref{app:data-description}
+    \end{itemize}
+    
+    \bigbreak
+    
+    Complete data documentation in appendix \ref{app:data-description}.
     
     
 \clearpage  
-
-
-\clearpage
-
-\clearpage
 
 \section{Anomaly Detection Techniques}
 \label{sec:anomaly}
@@ -163,7 +180,8 @@ The project system ARCOS handle information at three different levels of scale a
     
     % https://www.youtube.com/watch?v=4b5d3muPQmA
     
-    \subsubsection{A semplied implementation example}
+    \subsubsection{A semplified implementation example}
+    \label{subsec:dbscan-example}
     
     Let us imagine a simplified use case to which to apply the \textbf{DBSCAN} clustering algorithm in order to understand how it works and what prerequisites it requires.
     
@@ -212,5 +230,4 @@ The project system ARCOS handle information at three different levels of scale a
     \end{figure}
     
     Any remaining non-core points that are not close to core points in either cluster are not added to clusters and called \textbf{outliers}.
-    
     The outliers are the actual result of a DBSCAN implementation. In this example, we may simply be talking about people who are too tall compared to the average, but properly applied to a more relevant data set, outlier detection can be much more meaningful.

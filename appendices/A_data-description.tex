@@ -1,5 +1,5 @@
 \chapter{Appendix A - AIS Data Description}
-
+\label{app:data-description}
 In addition to the information required by the AIS standard, message data enriched with more information was used for the purpose of this thesis.
     
 The fields of the original source AIS data of single entry (that represents a message) are described below.
@@ -57,12 +57,11 @@ The fields of the original source AIS data of single entry (that represents a me
 \subsubsection{ROT}
     Rate of turn indicator, indicates the rate a ship is turning in degrees per minute (°/min).
 \subsubsection{Heading}
-    The heading of a ship is a similar parameter to COG, since it too measures the direction of a ship. The heading is the compass direction the boat is pointing, and it may not match COG if there are current and tidal effects. Heading is instantaneous, COG can be derived from boat's motion over time.
+    The heading of a ship is a parameter similar to COG, since it too measures the direction of a ship. The heading is the compass direction the boat is pointing, and it may not match COG if there are current and tidal effects. Heading is instantaneous, COG can be derived from boat's motion over time.
     \\
     \begin{center}
     \includegraphics[width=10cm]{Images/appendices/cog-sog.png}
     \end{center}
-    
 \subsubsection{Nav Status}
     The status of the vessel. Possible options: \\'Under Way Using Engine' 'Engaged In Fishing' 'Not Defined' 'At Anchor' 'Restricted Manoeuvrability' 'Moored' 'Underway Sailing' 'Unknown' 'Not Under Command'.
 \subsubsection{Nav Status Code}
