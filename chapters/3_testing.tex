@@ -25,29 +25,27 @@ In numbers:
 \item 6,777 segments (trips) generated.
 \end{itemize}
 
-I dati in questione hanno attraversato tutti gli step descritti nel capitolo della \ref{ch:methodology}, dal data cleaning fino all'implementazione del DBSCAN.
+I dati in questione hanno attraversato tutti gli step descritti nel capitolo \ref{ch:methodology}, dal data cleaning fino all'implementazione del DBSCAN.
 
 Attraverso un processo di hyperparameter tuning, come descritto nella sezione \ref{sec:tuning}, sono stati scelti i parametri di input di DBSCAN 
 
 \begin{center} 
-    $\varepsilon$ = 0.8 \textit{min\_samples} = 5
+    $\varepsilon$ = 0.8 \, \textit{min\_points} = 5
 \end{center} 
 
 Qui segue un dettaglio della dimensione di ogni cluster:
 \begin{itemize}
-\item cluster 1: 4106 trips
-\item cluster 2: 1178 trips
-\item cluster 3: 651 trips
-\item cluster 4: 456 trips
-\item cluster 5: 230 trips
+\item Cluster \textbf{\#1}: 4106 trips
+\item Cluster \textbf{\#2}: 1178 trips
+\item Cluster \textbf{\#3}: 651 trips
+\item Cluster \textbf{\#4}: 456 trips
+\item Cluster \textbf{\#5}: 230 trips
+\item 156 outliers
 \end{itemize}
 
 Come possiamo notare il primo cluster è significativamente più grande degli altri, rappresentando il cluster dei viaggi con le feature nei range più comuni. Alcune feature con valori meno comuni hanno contribuito alla creazione degli altri cluster. Viaggi con valori troppo diversi rispetto a quelli nei cluster rientrano invece nei 156 outliers risultanti.
 
-
-
-
-Ne sono risultati \textbf{5} clusters e \textbf{156} outliers (che rappresentano il 2,3\% del numero di viaggi di partenza)
+Ne sono risultati \textbf{5} clusters e \textbf{156} outliers (che rappresentano il 2,3\% del numero di viaggi di partenza). I risultati completi del clustering sono presenti nell'appendix \ref{app:tessting-results}.
 
 \clearpage
 \subsection{PCA, a graphical clusters representation technique}
@@ -93,8 +91,49 @@ Avendo un grafico come questo per ogni cluster è stato possibile capire nel com
 \subsection{Anomaly 1 - Extra distance}
 \label{sec:anomaly-1}
 
+L'anomalia collegata alla feature \textbf{extra distance} occupa le prime posizioni nella maggior parte delle classifiche di feature importance dei modelli risultanti.
+
+Naturalmente per la valutazione di questa anomalia non sono stati considerati tragitti con punti di terraferma all'interno della via, 
+
+\begin{lstlisting}[language=Python]
+extra_distance = ideal_distance - actual_distance
+\end{lstlisting}
+
+\begin{itemize}
+\item Model Accuracy: \textbf{0.9189} \textcolor{green}{> 0.8}
+\item T-test p value: \textbf{3.32e-03} \textcolor{green}{< 0.05}
+\item Average Value for outliers: \textbf{196km}
+\item Average Value for non outliers: \textbf{67.24km}
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=16.5cm]{Images/3/anomaly-1.png}
+    \caption{Vessel (MMSI 273397870) with a actual\_distance that differs greatly from the ideal\_distance.}
+\end{figure}
+
 \subsection{Anomaly 2 - Draught relative standard deviation}
 \label{sec:anomaly-2}
 
+\begin{itemize}
+\item Model Accuracy: \textbf{0.9189} \textcolor{green}{> 0.8}
+\item T-test p value: \textbf{3.32e-03} \textcolor{green}{< 0.05}
+\item Average Value for outliers: \textbf{196km}
+\item Average Value for non outliers: \textbf{67.24km}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=16.5cm]{Images/3/anomaly-2.png}
+    \caption{Draught value as proxy of cargo weight.}
+\end{figure}
+
 \subsection{Anomaly 3 - Going time percentage}
 \label{sec:anomaly-3}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{Images/3/anomaly-3.png}
+    \caption{Vessel (MMSI 273397870) with anomal going time stall point.}
+\end{figure}

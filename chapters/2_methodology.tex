@@ -340,7 +340,6 @@ Let \verb|df| (\textit{DataFrame}) be the container of all previously computed f
 \caption{Example of trip features dataframe}
 \end{table}
 
-
 \begin{comment}
 \subsection{Trip features correlation Analysis}
 
@@ -420,7 +419,7 @@ dbscan_model = DBSCAN(eps = 0.75, min_samples = 5)
 dbscan_model.fit(scaled_df)
 \end{lstlisting}
 
-The DBSCAN clustering algorithm has been implemented and within \verb|dbscan_model| we will find all the information regarding the clusters created and the trips considered as \textbf{outliers}. In the testing chapter, we will take a more in-depth look at how to reveal from outliers by applying this methodology to a real data set.
+The DBSCAN clustering algorithm has been implemented and within \verb|dbscan_model| we will find all the information regarding the clusters created and the trips considered as \textbf{outliers}. In the testing chapter, we will take a more in-depth look at how to reveal from outliers by applying this methodology to a real data set, together with a graphical representation of the clusters in the section \ref{sec:pca}.
 
 \subsection{Searching for hyperparameters}
 \label{sec:tuning}
@@ -454,11 +453,44 @@ for eps in eps_to_test:
 \end{minipage}
 
 \section{Feature importance analysis}
-
-After generating the clusters and outliers, an essential step in analyzing the results obtained is to perform \textbf{feature importance} to understand which features were most likely to have contibuted to classify some trips as outliers.
-
-Per fare questo è stata applicata la logistic regressio that attempts to model the probability of an event as linear combination of one or more independent variables. Retrieving the coefficients of the model is a common way to perform the feature importance to make interpretable machine learning models.
 \label{sec:importance}
+
+After generating the clusters and outliers, an essential step in analyzing the results obtained is to perform \textbf{feature importancea analysis} to understand which features were most likely to have contributed to classify some trips as outliers.
+
+To this end, the logistic regression technique was used, which attempts to model the probability of an event as a linear combination of one or more independent variables. Retrieval of model coefficients is a common method for determining feature importance and creating interpretable machine learning models.
+
+
+\begin{lstlisting}[language=Python]
+# logistic regression
+
+X = data_cluster.drop(columns=['cluster'])
+y = data_cluster['cluster'].apply(lambda x: 0 if x == -1 else 1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+model = LogisticRegression(max_iter=1000, class_weight='balanced')
+model.fit(X_train, y_train) # y = c0 + c1 * x1 + c2 * x2 + ... + c7 * x7
+importance = model.coef_[0]
+\end{lstlisting}
+
+The section \ref{sec:testing-importance} and appendix \ref{app:tessting-results} show the logistic regression results for each cluster obtained with the dataset used as a test.
+
 
 \section{Results Statistical significance}
 \label{sec:significance}
+
+Running a t-test to show the difference in average over a target feature between expected and anomalous AIS Data is statistical meaningful.
+
+
+\section{Anomalies evaluation}
+Entrambi la logistic regression per la feature importance e il T-test per la statistical significance sono tecniche utilizzate al fine di valutare le anomalie risultanti dal DBSCAN.
+
+Più nel dettaglio il modello trainato della logistic regression per ogni cluster è servito a classificiare le feature in ordine di importanza e ottenendo un'accuratezza del modello.
+
+Per ogni modello e per ogni feature il p value del T-test è stato valutato al fine di considerare solo anomalie con differenze di medie nel valore significativi.
+
+In numeri, sono state considerate solo anomalie collegate a features con:
+\begin{itemize}
+\item model accuracy > 0.8
+\item \textit{p value} < 0.05
+\end{itemize}
