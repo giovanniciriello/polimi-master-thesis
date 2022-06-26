@@ -88,16 +88,9 @@ Come descritto nella sezione \ref{sec:importance} uno step fondamentale è stato
 
 Avendo un grafico come questo per ogni cluster è stato possibile capire nel complesso quali sono le features più importanti al fine della classificazione degli outliers.
 
+\clearpage
 \subsection{Anomaly 1 - Extra distance}
 \label{sec:anomaly-1}
-
-L'anomalia collegata alla feature \textbf{extra distance} occupa le prime posizioni nella maggior parte delle classifiche di feature importance dei modelli risultanti.
-
-Naturalmente per la valutazione di questa anomalia non sono stati considerati tragitti con punti di terraferma all'interno della via, 
-
-\begin{lstlisting}[language=Python]
-extra_distance = ideal_distance - actual_distance
-\end{lstlisting}
 
 \begin{itemize}
 \item Model Accuracy: \textbf{0.9189} \textcolor{green}{> 0.8}
@@ -106,6 +99,19 @@ extra_distance = ideal_distance - actual_distance
 \item Average Value for non outliers: \textbf{67.24km}
 \end{itemize}
 
+The anomaly related to the feature \textbf{extra distance} occupies the top position in most rankings of feature importance rankings of the resulting models.
+
+Of course, routes with land points within the route were not considered in the evaluation of this anomaly, since for this type of trip it is quite normal to have an effective length much greater than the ideal length.
+
+\begin{lstlisting}[language=Python]
+extra_distance = ideal_distance - actual_distance
+\end{lstlisting}
+
+The \textbf{ideal distance} measures the distance in kilometers as the crow flies between the departure point to the arrival point. 
+    
+The \textbf{actual distance} measures the actual kilometers traveled by the ship during its trip. The calculation of this value is only possible by approximating the actual distance with the sum of the length of the different sections limited by the arrival of each message.
+
+An abnormal number in this feature could mean that the voyage has experienced some disruptions or there may have been some unauthorized stops by the ship.
 
 \begin{figure}[H]
     \centering
@@ -113,15 +119,26 @@ extra_distance = ideal_distance - actual_distance
     \caption{Vessel (MMSI 273397870) with a actual\_distance that differs greatly from the ideal\_distance.}
 \end{figure}
 
+\clearpage
 \subsection{Anomaly 2 - Draught relative standard deviation}
 \label{sec:anomaly-2}
 
 \begin{itemize}
-\item Model Accuracy: \textbf{0.9189} \textcolor{green}{> 0.8}
-\item T-test p value: \textbf{3.32e-03} \textcolor{green}{< 0.05}
-\item Average Value for outliers: \textbf{196km}
-\item Average Value for non outliers: \textbf{67.24km}
+\item Model Accuracy: \textbf{0.9003} \textcolor{green}{> 0.8}
+\item T-test p value: \textbf{3.32e-71} \textcolor{green}{< 0.05}
+\item Average Value for outliers: \textbf{504.5}
+\item Average Value for non outliers: \textbf{0.9957}
 \end{itemize}
+
+As explained in the appendix \ref{app:data-description} the draught of a vessel measures the maximum depth of any part of the vessel respect of the waterline, in meters. It might be considered a trivial measurement, but in maritime literature this value is used as a proxy for the weight of the ship's cargo.
+\\
+Since the dataset had different types of seagoing vessels with different sizes, a relative statistical measure indicating the level of draught variation during the voyage was computed, but relative to its own average.
+
+\\
+\begin{lstlisting}[language=Python]
+    var_coeff_draught = draught_arr.std() / draught_arr.mean() * 100
+\end{lstlisting} 
+
 
 \begin{figure}[H]
     \centering
@@ -129,8 +146,19 @@ extra_distance = ideal_distance - actual_distance
     \caption{Draught value as proxy of cargo weight.}
 \end{figure}
 
+A high value of this feature means that the draught has fluctuated significantly during the distance travelled, and thus a fault may have occurred, or that the ship has unexpectedly varied the weight of its cargo. Further manual and individual analysis could be performed with information not included in the AIS to find out if the cargo is an illicit cargo.
+
+\clearpage
 \subsection{Anomaly 3 - Going time percentage}
 \label{sec:anomaly-3}
+
+
+\begin{itemize}
+\item Model Accuracy: \textbf{0.8649} \textcolor{green}{> 0.8}
+\item T-test p value: \textbf{4.71e-05} \textcolor{green}{< 0.05}
+\item Average Value for outliers: \textbf{58.15}
+\item Average Value for non outliers: \textbf{97.17}
+\end{itemize}
 
 \begin{figure}[H]
     \centering

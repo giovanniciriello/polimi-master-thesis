@@ -170,19 +170,12 @@ Keywords may be a single word or two to four words.
 % ABSTRACT IN ITALIAN
 \chapter*{Abstract in lingua italiana}
 
-In collaborazione con ARCOS, sono stati collezionati dati contenenti informazioni di mezzi di trasporto marittimo durante tragitti nella zona dell'Artico. I suddetti dati contengono "messaggi" che rispettano lo standard AIS (Automatic Identification System), uno standard cruciale per garantire la sicurezza delle operazioni marittime. Il suo funzionamento si basa su numerosi sensori presenti a bordo e una ricetrasmittente che invia i dati, in questo specifico caso, a satelliti in orbita (S-AIS).
-
-ARCOS (Arctic Observatory for Copernicus SEA) è un progetto finanziato dall'Unione Europea che ha, tra i suoi obiettivi, quello di sviluppare sistemi di allerta predittiva su dati marittimi nella zona dell'Artico.
-
-In questa tesi si propone una metodologia per rilevare anomalie di qualsiasi genere avendo come punto di partenza un dataset di messaggi AIS. Per fare ciò, i messaggi sono stati in primo luogo raggruppati in tragitti; il tragitto infatti rappresenta l'entità sulla quale si è scelto di rilevare anomalie.
-Sui traggitti è satata applicato un algoritmo di clustering basato su densità spaziale (DBSCAN) e successivamente altre tecniche di analisi dei risultati al fine di valutare il significato dei valori anomali risultanti.
-Su un dataset di testing, sono state rilevate delle potenziali anomalie
-
-Lo scopo finale è quello di creare un componente che sia in grado di rilevare anomalie in tempo reale come step preliminare prima di un controllo individuale manuale da parte delle autorità competenti.
+Il trasporto marittimo è storicamente considerato il mezzo più efficace e diffuso per trasferire su lunga distanza consistenti carichi di merci in termini di dimensione e peso. Costituendo la base del 90\% del commercio mondiale \cite{trasporto-marittimo}, la sicurezza rappresenta uno degli aspetti più discussi e una intensa attività di ricerca ha interessato questo campo negli ultimi tempi.  
+In tale contesto, sempre più enti stanno implementando algoritmi di controllo che sfruttano tecniche di intelligenza artificiale e machine learning al fine di monitorare i viaggi marittimi. ARCOS (Arctic Observatory for Copernicus SEA) è un progetto finanziato dall'Unione Europea che ha, tra i suoi obiettivi, quello di sviluppare sistemi di allerta predittiva in grado di fornire un continuo monitoraggio della regione Artica. A tale scopo, ha collezionato dati relativi ai tragitti percorsi nella zona interessata da mezzi di trasporto marittimo. Tali dati contengono messaggi che rispettano lo standard AIS (Automatic Identification System), cruciale per garantire la sicurezza delle operazioni marittime. Il suo funzionamento si basa su numerosi sensori presenti a bordo e una ricetrasmittente che invia i dati - con una frequenza dell’ordine di minuti - a satelliti in orbita (messaggi S-AIS). Lo scopo della tesi è quello di proporre una metodologia per rilevare anomalie di qualsiasi genere a partire da un dataset di messaggi AIS. Al fine di raggiungere tale obiettivo, i messaggi sono stati in primo luogo raggruppati in tragitti, che rappresentano l'entità sulla quale si è scelto di rilevare anomalie. Su di essi è stato applicato un algoritmo di clustering basato su densità spaziale (DBSCAN) e successivamente tecniche di analisi dei valori anomali risultanti al fine di valutarne la rilevanza e il significato. Il metodo è stato validato su un dataset di testing, contenente più di 95 milioni di messaggi, sul quale sono state rilevate potenziali anomalie relative a distanza percorsa, tempi di navigazione e variazioni del carico. Un possibile sviluppo futuro è la creazione di un sistema di allerta predittiva che - sfruttando la metodologia proposta - permetta ai satelliti il rilevamento di anomalie in fase di ricezione dei messaggi come step preliminare ad un controllo manuale da parte delle autorità competenti.
 
 \\
 \\
-\textbf{Parole chiave:} AIS, Anomalia
+\textbf{Parole chiave:} AIS, Anomalia. Trasporto marittimo, DBSCAN, monitoraggio
 
 %----------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES/SYMBOLS

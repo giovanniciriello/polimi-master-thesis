@@ -1,10 +1,10 @@
 \chapter*{Introduction}
 \label{ch:introduction}
 
-Il lavoro presentato in questo documento è collegato al progetto ARCOS e ha come obiettivo la rilevazione di potenziali anomalie nei tragitti effettuati da mezzi di trasporto marittimi nella zona dell'Artico.
+The work presented in this paper is related to the ARCOS project and aims to identify potential anomalies in the routes of maritime transport in the Arctic region.
 
-Nel capitolo \ref{ch:stateOfTheArt} si fa una panoramica del contesto riguardante il progetto ARCOS e i suoi obiettivi, si descrive lo standard di messaggi marittimi AIS con un focus sui messaggi satellitari (S-AIS), e anche una descrizione delle tecniche di anomaly detection attualmente utilizzate, con un focus sul DBSCAN, che verrà utilizzato per clusterizzare i viaggi.
+The chapter \ref{ch:stateOfTheArt} gives an overview of the background regarding the ARCOS project and its goals, describes the AIS maritime messaging standard with a focus on satellite messaging (S- AIS), and also a description of the anomaly detection techniques currently in use with a focus on DBSCAN, which will be used to cluster trips.
 
-Il capitolo \ref{ch:methodology} include la completa metologia utilizzata, partendo dai dati AIS grezzi, iniziando con tecniche di data cleaning e procedendo con la generazione delle entitià tragitti tramite un algoritmo di raggruppamento logico. Procedendo ulteriormente con la selezione e la computazione delle feature dei viaggi da analizzare (features engineering) e l'implementazione dell'algoritmo di clustering DBSCAN. Infine la metodologia comprende tecniche di data analysis utili a comprendere i motivi per cui alcuni viaggi sono considerati outlier e quali sono significativi o meno.
+The chapter \ref{ch:methodology} contains all the methodology that has been used, starting with the raw AIS data, moving through data cleaning techniques, and ending with the generation of trip entities using a logical clustering algorithm. It continues with the selection and computation of trip features for analysis (features engineering) and the implementation of the DBSCAN clustering algorithm. Finally, the methodology includes data analysis techniques useful for understanding why some trips are considered outliers and which ones are significant or not.
 
-Nel capitolo \ref{ch:testing} si descrivono i risultati ottenuti con un dataset contenente più di 95 milioni di messaggi cercando di dare un'interpretazione alle anomalie più rilevanti.
+The chapter \ref{ch:testing} describes the results obtained on a dataset containing more than 95 million messages trying to allow an interpretation of the most relevant anomalies.
