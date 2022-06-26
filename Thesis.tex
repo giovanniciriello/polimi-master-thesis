@@ -149,23 +149,11 @@
 
 % ABSTRACT IN ENGLISH
 \chapter*{Abstract} 
-Here goes the Abstract in English of your thesis followed by a list of keywords.
-The Abstract is a concise summary of the content of the thesis (single page of text)
-and a guide to the most important contributions included in your thesis.
-The Abstract is the very last thing you write.
-It should be a self-contained text and should be clear to someone who hasn't (yet) read the whole manuscript.
-The Abstract should contain the answers to the main scientific questions that have been addressed in your thesis.
-It needs to summarize the adopted motivations and the adopted methodological approach as well as the findings of your work and their relevance and impact.
-The Abstract is the part appearing in the record of your thesis inside POLITesi,
-the Digital Archive of PhD and Master Theses (Laurea Magistrale) of Politecnico di Milano.
-The Abstract will be followed by a list of four to six keywords.
-Keywords are a tool to help indexers and search engines to find relevant documents.
-To be relevant and effective, keywords must be chosen carefully.
-They should represent the content of your work and be specific to your field or sub-field.
-Keywords may be a single word or two to four words. 
+Maritime transport has always been considered the most effective and widespread means of transferring substantial cargoes of goods in terms of size and weight over long distances. Since it constitutes 90\% of the world's trade \cite{trasporto-marittimo}, security is one of the most discussed aspects, and recently an intense research activity has concerned this field in recent times. 
+In this context, more and more agencies are deploying control algorithms that exploit artificial intelligence and machine learning techniques in order to monitor maritime voyages. ARCOS (Arctic Observatory for Copernicus SEA) is a European Union project that aims, among other things, to develop predictive warning systems that can ensure continuous monitoring of the Arctic region. For this purpose, it has collected data about the routes taken by ships in the area of concern. These data contain messages that comply with the Automatic Identification System (AIS) standard, which is crucial for ensuring the safety of maritime operations. The system works with numerous sensors on board and a transceiver that sends the data - at a frequency of the order of minutes - to orbiting satellites (S-AIS messages). The scope of this thesis is to propose a methodology to detect anomalies of any kind from a dataset of AIS messages. In order to achieve this goal, the messages were first grouped into trips, that represent the entity on which anomalies were chosen to be detected. A spatial density-based clustering algorithm (DBSCAN) was applied to them, followed by techniques to analyze the resulting outliers to assess their relevance and significance. The method was validated on a test dataset, containing more than 95 million messages, where potential anomalies were detected in terms of distance traveled, navigation time, and load variations. A possible future development is the creation of a predictive warning system that - taking advantage of the proposed methodology - would allow satellites to detect anomalies as messages are received as a preliminary step to a manual check by the relevant authorities.
 \\
 \\
-\textbf{Keywords:} here, the keywords, of your thesis % Keywords
+\textbf{Keywords:} AIS, Anomaly, Maritime Transport, DBSCAN, Monitoring.
 
 % ABSTRACT IN ITALIAN
 \chapter*{Abstract in lingua italiana}
@@ -175,7 +163,7 @@ In tale contesto, sempre più enti stanno implementando algoritmi di controllo c
 
 \\
 \\
-\textbf{Parole chiave:} AIS, Anomalia. Trasporto marittimo, DBSCAN, monitoraggio
+\textbf{Parole chiave:} AIS, Anomalia, Trasporto Marittimo, DBSCAN, Monitoraggio.
 
 %----------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES/SYMBOLS
@@ -240,6 +228,8 @@ In tale contesto, sempre più enti stanno implementando algoritmi di controllo c
 \input{appendices/A_data-description}
 
 \input{appendices/B_testing-results}
+
+\input{appendices/C_pca}
 
 
 % LIST OF FIGURES

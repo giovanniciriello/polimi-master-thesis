@@ -236,7 +236,7 @@ mean_sog = np.array([x['sog'] for x in going_msgs]).mean()
 mean_sog = np.array([x['cog'] for x in going_msgs]).mean()
     \end{lstlisting} 
     
-    \subsubsection{Underway using engine time percentage}
+    \subsubsection{Underway using engine time percentage (going\_time)}
     The time the ship spent in the \textit{Under Way Using Engine} state during its voyage can be estimated by summing the delta time frames of each message recorded in that state compared to the immediately preceding message. If a ship has slowed down and spent less time navigating than expected, this feature can highlight that.
     
     \begin{lstlisting}[language=Python]
@@ -455,9 +455,9 @@ for eps in eps_to_test:
 \section{Feature importance analysis}
 \label{sec:importance}
 
-After generating the clusters and outliers, an essential step in analyzing the results obtained is to perform \textbf{feature importancea analysis} to understand which features were most likely to have contributed to classify some trips as outliers.
+After generating the clusters and outliers, an essential step in analyzing the results obtained is to perform \textbf{feature importance analysis} to understand which features were most likely to have contributed to classify some trips as outliers.
 
-To this end, the logistic regression technique was used, which attempts to model the probability of an event as a linear combination of one or more independent variables. Retrieval of model coefficients is a common method for determining feature importance and creating interpretable machine learning models.
+To this end, the \textbf{logistic regression} technique was used, which attempts to model the probability of an event as a linear combination of one or more independent variables. Retrieval of model coefficients is a common method for determining feature importance and creating interpretable machine learning models.
 
 
 \begin{lstlisting}[language=Python]
@@ -473,13 +473,25 @@ model.fit(X_train, y_train) # y = c0 + c1 * x1 + c2 * x2 + ... + c7 * x7
 importance = model.coef_[0]
 \end{lstlisting}
 
-The section \ref{sec:testing-importance} and appendix \ref{app:tessting-results} show the logistic regression results for each cluster obtained with the dataset used as a test.
+The section \ref{sec:testing-importance} and appendix \ref{app:testing-results} show the logistic regression results for each cluster obtained with the dataset used as a test.
 
 
-\section{Results Statistical significance}
+\clearpage
+\section{Results Statistical Significance}
 \label{sec:significance}
 
-Running a t-test to show the difference in average over a target feature between expected and anomalous AIS Data is statistical meaningful.
+An indispensable step in assessing the classification quality of a trip as an outlier was to measure the difference between the mean of the outliers' feature value and the same mean value of the cluster under analysis.
+
+In statistics, in fact,the mean of a group of values is a measure that is not stable, i.e., it can be easily influenced. For this reason, a \textbf{T-test} is required to measure the actual difference between the two means.
+
+What is relevant in this context the parameter \textit{p} of the T-test result. If this parameter is smaller than 0.05, it means that the two mean values differ significantly different and consequently the outlier that has become one for this value is sufficiently relevant.
+
+\begin{lstlisting}[language=Python]
+ttest = stats.ttest_ind(
+    data_cluster[data_cluster['cluster'] == -1][feature],
+    data_cluster[data_cluster['cluster'] != -1][feature])
+pvalue = ttest.pvalue
+\end{lstlisting}
 
 
 \section{Anomalies evaluation}

@@ -5,13 +5,13 @@
 
 This chapter describes the implementation of the \ref{ch:methodology} chapter's methodology through the usage and analysis of a data set provided by Arcos \cite{arcos}. The results obtained in the various steps of the methodology are discussed in depth and the results are analyzed trying to highlight the most noticeable anomalies.
 
-Nel capitolo vengono introdotti i dati originiali AIS utilizzati per questa sessione di testing. Se ne descrivono i numeri e le proprietà. Inoltre vengono descritti numericamente i risultati del DBSCAN come numero di cluster e outliers.
+The chapter \ref{sec:testing-dataset} introduces the AIS source data used for this testing session. Their numbers and properties are described. In addition, the DBSCAN results are described numerically as the number of clusters and outliers resulted from the implemetnation.
 
-Nel capitolo viene illustrata una rappresentazione grafica dei cluster risultanti dall'esecuzione del DBSCAN con i dati in questione.
+A graphical representation of the clusters resulting from running the DBSCAN with these data is illustrated in the chapter \ref{sec:pca}.
 
-Nel capitolo si fornisce una classificazione delle features che più hanno contribuito a considerare gli outlier come tali, se ne valutano le proprietà come la model accuracy e il T-test value, al fine di selezionare le tre feature più importanti.
+In the chapter \ref{sec:testing-importance}, a classification of the features that most contributed to the outliers being considered as such is provided, their properties such as model accuracy and T-test value are evaluated in order to select the three most important features.
 
-Nei capitoli si descrivono nel dettaglio le tre anomalie risultanti, cercando anche di dare un'interpretazione approfondita di queste ultime
+In the chapters \ref{sec:anomaly-1}, \ref{sec:anomaly-2}, \ref{sec:anomaly-3} the three resulting outliers are described in detail, and an attempt is also made to give an in-depth interpretation of them.
 
 \clearpage
 \subsection{The original Dataset and clustering results}
@@ -43,11 +43,12 @@ Qui segue un dettaglio della dimensione di ogni cluster:
 \item 156 outliers
 \end{itemize}
 
-Come possiamo notare il primo cluster è significativamente più grande degli altri, rappresentando il cluster dei viaggi con le feature nei range più comuni. Alcune feature con valori meno comuni hanno contribuito alla creazione degli altri cluster. Viaggi con valori troppo diversi rispetto a quelli nei cluster rientrano invece nei 156 outliers risultanti.
+As we can see, the first cluster is significantly larger than the others and represents the travel cluster with features in the most common ranges. Some features with less common values contributed to the other clusters. Instead, trips with values too different from those in the clusters fall into the resulting \textbf{156} outliers.
 
-Ne sono risultati \textbf{5} clusters e \textbf{156} outliers (che rappresentano il 2,3\% del numero di viaggi di partenza). I risultati completi del clustering sono presenti nell'appendix \ref{app:tessting-results}.
+This resulted in \textbf{5} clusters and \textbf{156} outliers (representing 2.3\% of the number of starting trips). The complete clustering results can be found in the appendix \ref{app:testing-results}.
 
 \clearpage
+
 \subsection{PCA, a graphical clusters representation technique}
 \label{sec:pca}
 
@@ -73,12 +74,13 @@ Using the Principal Component Analysis (PCA) technique with two components, it h
     \caption{Graphic representation of clusters in 2 components with PCA}
 \end{figure}
 
-Probabilmente, trattandosi di dimensioni fittizie, questa raffigurazione non risulta molto significativa da guardare a occhio nudo, ma fa capire come ha funzionato il DBSCAN. Difatti i diversi colori con cui sono rappresentati i punti rappresentano i diversi cluster generati. Invece la dimensione del punto distingue i core points dai non-core points. Infine, i piccoli pallinni neri rappresentano gli outliers evidenziati dall'algoritmo.
+Probably because these are \textit{dummy} dimensions, this depiction is not very meaningful to look at with the naked eye, but it does give insight into how the DBSCAN worked. In fact, the different colors with which the points are represented represent the different clusters generated. Instead, the size of the dot distinguishes \textbf{core points} from \textbf{non-core points}. Finally, the small black dots represent the \textbf{outliers} highlighted by the algorithm.
+
 
 \subsection{Features importance}
 \label{sec:testing-importance}
 
-Come descritto nella sezione \ref{sec:importance} uno step fondamentale è stato quello di analizzare le feature importance per ogni modello dopo l'implementazione di DBSCAN grazie alla logistic regression.
+As described in the \ref{sec:importance} section, a key step was to analyze the feature importance for each model after DBSCAN implementation thanks to logistic regression.
 
 \begin{figure}[H]
     \centering
@@ -86,7 +88,7 @@ Come descritto nella sezione \ref{sec:importance} uno step fondamentale è stato
     \caption{Feature importance classification for Cluster \#1}
 \end{figure}
 
-Avendo un grafico come questo per ogni cluster è stato possibile capire nel complesso quali sono le features più importanti al fine della classificazione degli outliers.
+By having a graph like this for each cluster, it was possible to understand overall which features are most important for the purpose of classifying outliers.
 
 \clearpage
 \subsection{Anomaly 1 - Extra distance}
@@ -134,7 +136,6 @@ As explained in the appendix \ref{app:data-description} the draught of a vessel 
 \\
 Since the dataset had different types of seagoing vessels with different sizes, a relative statistical measure indicating the level of draught variation during the voyage was computed, but relative to its own average.
 
-\\
 \begin{lstlisting}[language=Python]
     var_coeff_draught = draught_arr.std() / draught_arr.mean() * 100
 \end{lstlisting} 
@@ -149,9 +150,10 @@ Since the dataset had different types of seagoing vessels with different sizes, 
 A high value of this feature means that the draught has fluctuated significantly during the distance travelled, and thus a fault may have occurred, or that the ship has unexpectedly varied the weight of its cargo. Further manual and individual analysis could be performed with information not included in the AIS to find out if the cargo is an illicit cargo.
 
 \clearpage
-\subsection{Anomaly 3 - Going time percentage}
+\subsection{Anomaly 3 - Underway using engine percentage}
 \label{sec:anomaly-3}
 
+\\
 
 \begin{itemize}
 \item Model Accuracy: \textbf{0.8649} \textcolor{green}{> 0.8}
@@ -159,9 +161,20 @@ A high value of this feature means that the draught has fluctuated significantly
 \item Average Value for outliers: \textbf{58.15}
 \item Average Value for non outliers: \textbf{97.17}
 \end{itemize}
+\\
+
+Each AIS message also contained ship status information. The most common value of this field is '\textit{Underway using engine}'. With this information it was possible to calculate an approximation that measures how much time the ship spent in this status.
+According to this anomaly, however, there are voyages that have a lower percentage of time spent in this state than usual, as can be seen from the difference between the average value for outliers versus non-outliers.
+\\
+\begin{lstlisting}[language=Python]
+    going_time_perc = going_time / duration * 100
+\end{lstlisting} 
+\\
+By graphically depicting these trips on a map, one can see standoff points where the ship stopped for a substantial amount of time. Again, by cross-referencing additional information, the precise reason can be determined.
+
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{Images/3/anomaly-3.png}
+    \includegraphics[width=12cm]{Images/3/anomaly-3.png}
     \caption{Vessel (MMSI 273397870) with anomal going time stall point.}
 \end{figure}
