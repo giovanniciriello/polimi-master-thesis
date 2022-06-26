@@ -3,27 +3,55 @@
 
 \section{Overview}
 
-This chapter describes the implementation of the \ref{ch:methodology} chapter's methodology through the usage and analysis of a data set provided by Arcos \cite{arcos}. 
+This chapter describes the implementation of the \ref{ch:methodology} chapter's methodology through the usage and analysis of a data set provided by Arcos \cite{arcos}. The results obtained in the various steps of the methodology are discussed in depth and the results are analyzed trying to highlight the most noticeable anomalies.
 
+Nel capitolo vengono introdotti i dati originiali AIS utilizzati per questa sessione di testing. Se ne descrivono i numeri e le proprietà. Inoltre vengono descritti numericamente i risultati del DBSCAN come numero di cluster e outliers.
 
+Nel capitolo viene illustrata una rappresentazione grafica dei cluster risultanti dall'esecuzione del DBSCAN con i dati in questione.
 
-- descrizione dei dati originali, percentuali
-- descrizione dei viaggi, percentuali
-- heatmap
-- 
+Nel capitolo si fornisce una classificazione delle features che più hanno contribuito a considerare gli outlier come tali, se ne valutano le proprietà come la model accuracy e il T-test value, al fine di selezionare le tre feature più importanti.
 
-\subsection{The original Dataset}
+Nei capitoli si descrivono nel dettaglio le tre anomalie risultanti, cercando anche di dare un'interpretazione approfondita di queste ultime
+
+\clearpage
+\subsection{The original Dataset and clustering results}
+\label{sec:testing-dataset}
 The source dataset selected to carry out testing of the described methodology is as mentioned composed of AIS messages.
 Nel dettaglio, si tratta di messaggi provenienti da navi che hanno attraversato la zona artica e dintorni negli anni 2019, 2020 e 2021.
 In numbers:
 \begin{itemize}
 \item 95,294,750 AIS messages;
 \item 10,058 different vessels;
-\item 6,777 segments generated.
+\item 6,777 segments (trips) generated.
 \end{itemize}
 
+I dati in questione hanno attraversato tutti gli step descritti nel capitolo della \ref{ch:methodology}, dal data cleaning fino all'implementazione del DBSCAN.
 
-\subsection{PCA, a graphical clusters rapresentation technique}
+Attraverso un processo di hyperparameter tuning, come descritto nella sezione \ref{sec:tuning}, sono stati scelti i parametri di input di DBSCAN 
+
+\begin{center} 
+    $\varepsilon$ = 0.8 \textit{min\_samples} = 5
+\end{center} 
+
+Qui segue un dettaglio della dimensione di ogni cluster:
+\begin{itemize}
+\item cluster 1: 4106 trips
+\item cluster 2: 1178 trips
+\item cluster 3: 651 trips
+\item cluster 4: 456 trips
+\item cluster 5: 230 trips
+\end{itemize}
+
+Come possiamo notare il primo cluster è significativamente più grande degli altri, rappresentando il cluster dei viaggi con le feature nei range più comuni. Alcune feature con valori meno comuni hanno contribuito alla creazione degli altri cluster. Viaggi con valori troppo diversi rispetto a quelli nei cluster rientrano invece nei 156 outliers risultanti.
+
+
+
+
+Ne sono risultati \textbf{5} clusters e \textbf{156} outliers (che rappresentano il 2,3\% del numero di viaggi di partenza)
+
+\clearpage
+\subsection{PCA, a graphical clusters representation technique}
+\label{sec:pca}
 
 In order to a get an idea of the clusters from a graphical point of view, a \textbf{dimensionality reduction} procedure was used: \textbf{Principal Component Analysis}.
 PCA has the task of reducing an input space with n dimensions into a space with smaller number of dimensions.
@@ -45,6 +73,28 @@ Using the Principal Component Analysis (PCA) technique with two components, it h
     \centering
     \includegraphics[width=13cm]{Images/3/clusters.png}
     \caption{Graphic representation of clusters in 2 components with PCA}
-    
-    
 \end{figure}
+
+Probabilmente, trattandosi di dimensioni fittizie, questa raffigurazione non risulta molto significativa da guardare a occhio nudo, ma fa capire come ha funzionato il DBSCAN. Difatti i diversi colori con cui sono rappresentati i punti rappresentano i diversi cluster generati. Invece la dimensione del punto distingue i core points dai non-core points. Infine, i piccoli pallinni neri rappresentano gli outliers evidenziati dall'algoritmo.
+
+\subsection{Features importance}
+\label{sec:testing-importance}
+
+Come descritto nella sezione \ref{sec:importance} uno step fondamentale è stato quello di analizzare le feature importance per ogni modello dopo l'implementazione di DBSCAN grazie alla logistic regression.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=13cm]{Images/3/importance.png}
+    \caption{Feature importance classification for Cluster \#1}
+\end{figure}
+
+Avendo un grafico come questo per ogni cluster è stato possibile capire nel complesso quali sono le features più importanti al fine della classificazione degli outliers.
+
+\subsection{Anomaly 1 - Extra distance}
+\label{sec:anomaly-1}
+
+\subsection{Anomaly 2 - Draught relative standard deviation}
+\label{sec:anomaly-2}
+
+\subsection{Anomaly 3 - Going time percentage}
+\label{sec:anomaly-3}
