@@ -3,19 +3,19 @@
 
 \section{Overview}
 
-This chapter describes the steps that describe the methodology for detecting anomalies of any kind from a large dataset of AIS messages.
+This chapter includes the steps that describe the methodology for detecting anomalies of any kind from a large dataset of AIS messages.
 
 The process for detecting anomalies in datasets containing AIS involved several steps that included data engineering techniques such as data cleaning, normalization, transformation, scaling, and finally clustering, as well as a methodology for analyzing the results.
 
-Section \ref{sec:cleaning} describes the methodology used to perform \textbf{data cleaning} of the original data in order to avoid syntactic errors and to perform \textbf{data normalization} of the classical AIS message structure with the aim of lightening the data set and reducing the likelihood of data inconsistencies.
+Section \ref{sec:cleaning} describes the methodology used to perform \textbf{data cleaning} of the original data in order to avoid syntactic errors or corrupted messages and to perform \textbf{data normalization} of the classical AIS message structure with the aim of lightening the data set and reducing the likelihood of data inconsistencies.
 
-In section \ref{sec:trips} focus shifts to the the anomaly detection object: the \textbf{trip entity}, for which, since it is not explicitly distinguished in each AIS message, a logical-grouping algorithm was required to generate them.
+In section \ref{sec:trips} focus shifts to the the anomaly detection object: the \textbf{trip entity}, for which, since it is not explicitly distinguished in each AIS standard message, a logical-grouping algorithm was required to generate them.
 
 Section \ref{sec:features} contains the \textbf{features engineering} methodology description, that includes the selection and computation of the numerical features for each trip, which are essential for applying the DBSCAN clustering algorithm.
 
 In section \ref{sec:clustering}, the trip data are analyzed with their numerical features and then clustered using the \textbf{DBSCAN algorithm}, obtaining clusters and outliers as result.
 
-In section \ref{sec:importance} the outliers are analyzed in detail, and \textbf{features importance} is carried out thanks to logistic regression technique, which aims to highlight the features with which the outliers were most likely to classify the outliers as such.
+In section \ref{sec:importance} the outliers are analyzed in detail, and \textbf{features importance} analysis is carried out thanks to \textbf{logistic regression} technique, which aims to highlight the features with which the outliers were most likely to classify the outliers.
 
 At the end, in section \ref{sec:significance} a \textbf{T-test} was ran in order to show the difference in average over each target feature between expected and anomalous AIS Data to measure their statistical meaningful.
 
@@ -185,7 +185,9 @@ if len(rows) > 1:
 
 \section{Features Engineering}
 \label{sec:features}
-    One of the most important preliminary steps before applying the DBSCAN clustering method is by far the selection and computation of the \textbf{numerical features} that will become the dimensions we use to describe our entities in space. This phase is called \textbf{Feautures engineering} in the literature. 
+    One of the most important preliminary steps before applying the DBSCAN clustering method is by far the selection and computation of the \textbf{numerical features} that will become the dimensions we use to describe our entities in space.
+    \\
+    This phase is called \textbf{Feautures engineering} in the literature. 
      
     The selection of features is so important because the algorithm is able to consider trips as \textit{near} or \textit{far} from each other based on these features. Indeed, a correctly detected anomaly is one that highlights a value of some features that are substantially distant from a group of features with relatively similar values.
     
@@ -217,7 +219,6 @@ rel_delay = delay / duration
 var_coeff_draught = draught_arr.std() / draught_arr.mean() * 100
     \end{lstlisting} 
     
-        
     \subsubsection{Average Speed Over Ground}
     
     As explained in the Appendix \ref{app:data-description} - AIS Data Description, \textbf{sog} (Speed Over Ground) indicates the speed of the ship during its voyage. In order to point out anomalies such as excessive deceleration, this feature has been added and calculated as follows:
@@ -294,7 +295,8 @@ for i, g  in enumerate(trip_msgs):
     
     \subsubsection{Duration}
 
-    This feature indicates the duration of the trip. Let \verb|ts_arr| be the array containing the timestamps of each message belonging to the trip. Duration in seconds is calculated as below:
+    This feature indicates the absolute duration of the trip.
+    Let \verb|ts_arr| be the array containing the timestamps of each message belonging to the trip. Duration in seconds is calculated as below:
     
     \begin{lstlisting}[language=Python]
 duration = max(ts_arr) - min(ts_arr)
@@ -407,7 +409,7 @@ As mentioned earlier the DBSCAN needs two \textbf{parameters}:
 
 \begin{itemize}
 \item $\varepsilon$ which corresponds to the distance within which to search for neighboring points;
-\item \textit{n} which corresponds to the minimum number of points in order to compose a cluster.
+\item \textit{minPoints} which corresponds to the minimum number of points to compose a cluster.
 \end{itemize}
 
 For the sake of brevity we can say that the DBSCAN does nothing more than search for all those clusters whose points are greater than or equal to a number less than $\varepsilon$.
@@ -452,29 +454,36 @@ for eps in eps_to_test:
 \end{lstlisting}
 \end{minipage}
 
+\clearpage
 \section{Feature importance analysis}
 \label{sec:importance}
 
-After generating the clusters and outliers, an essential step in analyzing the results obtained is to perform \textbf{feature importance analysis} to understand which features were most likely to have contributed to classify some trips as outliers.
+After generating the clusters and outliers, an essential step in analyzing the obtained results is to perform the \textbf{feature importance analysis} to understand which features are most likely to have contributed to classify some trips as \textbf{outliers}.
 
-To this end, the \textbf{logistic regression} technique was used, which attempts to model the probability of an event as a linear combination of one or more independent variables. Retrieval of model coefficients is a common method for determining feature importance and creating interpretable machine learning models.
+Among all the different techniques that can be used to perform the feature importance, the one used in this thesis consists in training a logistic regression model, which attempts to model the probability of an event as a linear combination of one or more independent variables.
+\\
+However, it is important to underline which are the independent variables and what is the outcome. As result of clusters, a new column \textit{cluster} has been added which tells at which cluster a single point belongs to. In light of this, the idea is to train as many logistic regressions models as the number of clusters to compare each cluster with all outliers to discover the reason why a point has been excluded from that specific cluster. Thus, the independent variables are all the features used to create the clusters, while the outcome is the \textit{cluster} column. Being the output a logistic regression binary, the model tells us the is a point has been classified to be part of the cluster or the outliers. 
 
+Although it could seem that training a logistic regression is enough, the thesis wants to evaluate how well the model is fitting the cluster to be sure that the result is accurate. At this aim, we divided the data in two sets: train and test with a proportion of 0.2, meaning that the 20\% of the data is used to evaluate the performances of the model. In the section \ref{sec:evaluation}, it is explains in the details how a model has been validated.
 
+Once all models are ready and validated, the next step is to perform the feature importance. The idea behind it is to take the absolute values of all coefficients of each model, sort them in a descending way and represent them in a table. In the appendix \ref{app:testing-results} are available all tables, one for each cluster. The importance column represent the coefficient of the logistic regression, while the sign tells us if the coefficient was originally positive or negative. In particular, a positive sign means that the feature was dragging the prediction to be 1, namely to belong to the cluster. Moreover, the average value of that feature in the cluster and in the outliers as been reported together with the p-value of a t-test to verify the statistical significance of the difference between these two values. 
+
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=Python]
 # logistic regression
 
 X = data_cluster.drop(columns=['cluster'])
 y = data_cluster['cluster'].apply(lambda x: 0 if x == -1 else 1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
 
 model = LogisticRegression(max_iter=1000, class_weight='balanced')
 model.fit(X_train, y_train) # y = c0 + c1 * x1 + c2 * x2 + ... + c7 * x7
 importance = model.coef_[0]
 \end{lstlisting}
+\end{minipage}
 
-The section \ref{sec:testing-importance} and appendix \ref{app:testing-results} show the logistic regression results for each cluster obtained with the dataset used as a test.
-
+To avoid biased results, the \textit{class\_weight} parameter of the logistic regression function has been used, that tries to to assign a weight to each point accordingly to the sample size of its class \cite{logistic_regression}. To the same end, the \textit{stratify} parameter ensures to have the same number of outliers in the train and test sets. 
 
 \clearpage
 \section{Results Statistical Significance}
@@ -482,9 +491,9 @@ The section \ref{sec:testing-importance} and appendix \ref{app:testing-results} 
 
 An indispensable step in assessing the classification quality of a trip as an outlier was to measure the difference between the mean of the outliers' feature value and the same mean value of the cluster under analysis.
 
-In statistics, in fact,the mean of a group of values is a measure that is not stable, i.e., it can be easily influenced. For this reason, a \textbf{T-test} is required to measure the actual difference between the two means.
+However, in statistics the mean of a group of values is a non-stable measure, i.e., it can be easily influenced. To address this issue, a \textbf{t-test} has been performed to measure the actual difference between the two means.
 
-What is relevant in this context the parameter \textit{p} of the T-test result. If this parameter is smaller than 0.05, it means that the two mean values differ significantly different and consequently the outlier that has become one for this value is sufficiently relevant.
+When running a \textit{t-test}, it is important to define the null hypothesis, that is the hypothesis we want to reject in order to accept the alternative one. In case of means, the null hypothesis is the fact that the two means are equal. The result of this test is the \textit{p-value}. A p-value is the probability that the results from our sample data occurred by chance. Thus, a low p-values indicate that the data did not occur by chance. In other words, a low values indicates a low probability of having the two means equal. In statistics, a value smaller than 0.05 means that the difference between the two means is statically significant and consequently the outlier that has become one for this value is sufficiently relevant.
 
 \begin{lstlisting}[language=Python]
 ttest = stats.ttest_ind(
@@ -495,13 +504,14 @@ pvalue = ttest.pvalue
 
 
 \section{Anomalies evaluation}
-Entrambi la logistic regression per la feature importance e il T-test per la statistical significance sono tecniche utilizzate al fine di valutare le anomalie risultanti dal DBSCAN.
+\label{sec:evaluation}
+Both logistic regression for feature significance and the T-test for statistical significance are techniques used to evaluate anomalies resulting from DBSCAN.
 
-Più nel dettaglio il modello trainato della logistic regression per ogni cluster è servito a classificiare le feature in ordine di importanza e ottenendo un'accuratezza del modello.
+Specifically, the logistic regression trained model was used for each cluster to rank the features by importance and to obtain model accuracy.
 
-Per ogni modello e per ogni feature il p value del T-test è stato valutato al fine di considerare solo anomalie con differenze di medie nel valore significativi.
+For each model and feature, the p value of the T-test was evaluated to consider only anomalies with differences in the significant value.
 
-In numeri, sono state considerate solo anomalie collegate a features con:
+In terms of numbers, only anomalies related to features with:
 \begin{itemize}
 \item model accuracy > 0.8
 \item \textit{p value} < 0.05

@@ -5,13 +5,13 @@
 
 This thesis was carried out in connection with the EU-funded \textbf{ARCOS project} which has, among other objectives, to develop mechanisms for pro-active intelligence generation based on an early warning system.
 
-This chapter is intended to provide the reader with some basic knowledge of the maritime domain, the data standard used and the techniques used for anomaly detection in order to better understand the methodology described in Chapter \ref{ch:methodology} and the results obtained in the testing phase in Chapter \ref{ch:testing}
+This chapter is intended to provide the reader with some basic knowledge of the maritime domain, the data standard used and the techniques used for anomaly detection in order to better understand the methodology described in Chapter \ref{ch:methodology} and the results obtained in the testing phase in Chapter \ref{ch:testing}.
 
-The section \ref{sec:arcos} briefly introduces \textbf{ARCOS}: the company with which this work is associated, the objectives of its project, and the methods it uses to achieve its goals.
+The section \ref{sec:arcos} briefly introduces \textbf{ARCOS}: the project with which this work is associated, the objectives of its project, and the methods it uses to achieve its goals.
 
 The \ref{sec:ais} section describes the \textbf{AIS data}, the standard currently used for the interchange of maritime information between ships and between ships and satellites. It also explains the data sent to the satellites, the origin of some of the problems with this system, and the importance of anomaly detection in this field. 
 
-In the \ref{sec:anomaly} section, basic techniques are presented that help in a general sense to detect anomalies in a data set. \textbf{Clustering technique}s are explored, in particular one based on spatial density: DBSCAN, which is applied precisely to AIS data.
+In the \ref{sec:anomaly} section, basic techniques are presented that help in a general sense to detect anomalies in a data set. \textbf{Clustering technique}s are explored, in particular one based on spatial density: \textbf{DBSCAN}.
 
 \clearpage
 
@@ -62,6 +62,7 @@ The project system ARCOS handle information at three different levels of scale a
     Despite the strict regulations in place on AIS systems, for a variety of reasons, ships may turn off their AIS transceivers or, much more frequently, technical errors may occur that affect the continuity of the reception of AIS messages.
     
     \subsection{A focus on Satellite AIS}
+    \label{sec:s-ais}
     AIS is designed to assist a ship's watch-keeping officers and to enable maritime authorities to track and monitor ship movements. AIS integrates a standardized VHF (Very High Frequency) transceiver with a positioning system, with other electronic navigation sensors, such as a gyrocompass or rate-of-turn indicator. Vessels equipped with AIS transceivers can be tracked by AIS base stations along coastlines or, when out of range of terrestrial networks, via a high number of satellites equipped with specialized AIS receivers. 
     \\
     Satellite Automatic Identification System (\textbf{S-AIS}) is based on satellite infrastructure and in particular on satellites in Low Earth Orbit (LEO). These satellites are equipped with AIS receivers and the received messages are retransmitted in a broadcast system.
@@ -166,7 +167,7 @@ The project system ARCOS handle information at three different levels of scale a
     \\
     The algorithm works with a given set of points in a given space, it groups the points that are close enough to each other and labels the points that are in low-density regions alone as outliers. DBSCAN is one of the most common clustering algorithms and is also one of the most cited in the scientific literature.
     \\
-    In order to represent data points in a space, the concept of dimension must be defined. Namely, for each data point, the characteristics - necessarily numerical - must be defined, which then form the coordinates in the space where the density analysis is performed. It is very important to accurately select the numerical features of the data set, based on the ones we want to highlight in order to get back similarities or differences with this algorithm.
+    In order to represent data points in a space, the concept of dimension must be defined. Namely, for each data point, the characteristics - necessarily numerical - must be defined, which then form the coordinates in the space where the density analysis is performed. It is very important to accurately select the numerical features of the data set, based on the ones I want to highlight in order to get back similarities or differences with this algorithm.
     \\
     Considering a set of points in a space to be clustered. Let $\varepsilon$ be a parameter that specifies the radius of a neighborhood with respect to a point.
     For the purposes of the DBSCAN clustering, the points are divided into \textbf{core points}, \textbf{reachable points}, and \textbf{outliers} as follows:
@@ -185,7 +186,7 @@ The project system ARCOS handle information at three different levels of scale a
     
     Let us imagine a simplified use case to which to apply the \textbf{DBSCAN} clustering algorithm in order to understand how it works and what prerequisites it requires.
     
-    Imagine that we measured the weight and height of a number of people and plotted them on a two-dimensional graph, with weight on the x-axis as the first dimension and height on the y-axis as the second dimension.
+    Imagine that measured the weight and height of a number of people and plotted them on a two-dimensional graph, with weight on the x-axis as the first dimension and height on the y-axis as the second dimension.
     The dimensions used to describe the space in which the data points are to be represented are called \textbf{algorithm features} and must be carefully selected to obtain meaningful anomalies.
     
     \begin{figure}[H]
@@ -231,3 +232,14 @@ The project system ARCOS handle information at three different levels of scale a
     
     Any remaining non-core points that are not close to core points in either cluster are not added to clusters and called \textbf{outliers}.
     The outliers are the actual result of a DBSCAN implementation. In this example, we may simply be talking about people who are too tall compared to the average, but properly applied to a more relevant data set, outlier detection can be much more meaningful.
+    
+\section{Related work}
+\label{related-works}
+
+In order to define the most complete and adequate methodology possible, published related works were analyzed.
+
+Among the most relevant and pertinent to the described methodology are "\textit{DBSCAN algorithm for AIS data reconstruction}" \cite{dbscan_ais}, which proposes an approach with the ultimate goal of reconstructing the historical series of AIS messages interrupted due to the technical problems as packet collision, explained in section \ref{sec:s-ais}. In the mentioned paper, a machine learning-based approach is presented with the aim to reconstruct those missing messages and deeply investigate whether or not a density-based spatial clustering of applications with noise can be considered in the first stage of the reconstruction.
+The approach used by this paper is definitely suitable for dealing with AIS data, but it focuses on the single issue of \textbf{packet collision}, not considering that several anomalies can be pointed out from the information contained in the AIS message information, as is done in this thesis.
+
+On the other side, in "\textit{Real-time mobility data analytics: methodologies for efficient anomaly detection and trajectory classification}" \cite{Real-time-ais}, a semantic analysis of AIS messages was performed, highlighting the need to use meaningful information and identify mobility patterns from such tracking data in an automated way that does not require expert input. The goal, as in this work, is to detect \textbf{potentially illegal behavior}, provide real-time alerts, and inform authorities of any kind of anomalous vessel behavior. To this end, the mentioned work presents a distributed architecture capable of identifying erroneous or noisy events in streams of vessel tracking data. To achieve this, sparse historical ship tracking data are used to extract shipping paths. An alternative to the popular density-based clustering algorithm \textbf{DBSCAN} via a distributed architecture is proposed that modifies the proximity parameter of the algorithm. The proposed alternative uses the difference in \textbf{speed}, \textbf{heading}, and \textbf{position} to determine the distance between two consecutive AIS signals from the same vessel.
+Although the alternative to DBSCAN proposed in this thesis allows for a distributed architecture, in this thesis, I choose to pursue the path of the best-known clustering algorithm in the category of spatial density-based algorithms - DBSCAN, indeed - which offers several advantages in terms of speed of implementation, tuning and analysis of results.

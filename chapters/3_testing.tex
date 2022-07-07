@@ -14,10 +14,10 @@ In the chapter \ref{sec:testing-importance}, a classification of the features th
 In the chapters \ref{sec:anomaly-1}, \ref{sec:anomaly-2}, \ref{sec:anomaly-3} the three resulting outliers are described in detail, and an attempt is also made to give an in-depth interpretation of them.
 
 \clearpage
-\subsection{The original Dataset and clustering results}
+\section{The original Dataset and clustering results}
 \label{sec:testing-dataset}
 The source dataset selected to carry out testing of the described methodology is as mentioned composed of AIS messages.
-Nel dettaglio, si tratta di messaggi provenienti da navi che hanno attraversato la zona artica e dintorni negli anni 2019, 2020 e 2021.
+In detail, these are messages from ships that passed through and around the Arctic Region in the years 2019, 2020, and 2021.
 In numbers:
 \begin{itemize}
 \item 95,294,750 AIS messages;
@@ -25,15 +25,15 @@ In numbers:
 \item 6,777 segments (trips) generated.
 \end{itemize}
 
-I dati in questione hanno attraversato tutti gli step descritti nel capitolo \ref{ch:methodology}, dal data cleaning fino all'implementazione del DBSCAN.
+The data went through all the steps described in the \ref{ch:methodology} section, from data cleaning to DBSCAN implementation.
 
-Attraverso un processo di hyperparameter tuning, come descritto nella sezione \ref{sec:tuning}, sono stati scelti i parametri di input di DBSCAN 
+Through a process of hyperparameter tuning, as described in the \ref{sec:tuning} section, the input parameters of DBSCAN were chosen. 
 
 \begin{center} 
     $\varepsilon$ = 0.8 \, \textit{min\_points} = 5
 \end{center} 
 
-Qui segue un dettaglio della dimensione di ogni cluster:
+A detail of the size of each cluster follows here:
 \begin{itemize}
 \item Cluster \textbf{\#1}: 4106 trips
 \item Cluster \textbf{\#2}: 1178 trips
@@ -49,7 +49,7 @@ This resulted in \textbf{5} clusters and \textbf{156} outliers (representing 2.3
 
 \clearpage
 
-\subsection{PCA, a graphical clusters representation technique}
+\section{PCA, a graphical clusters representation technique}
 \label{sec:pca}
 
 In order to a get an idea of the clusters from a graphical point of view, a \textbf{dimensionality reduction} procedure was used: \textbf{Principal Component Analysis}.
@@ -76,22 +76,26 @@ Using the Principal Component Analysis (PCA) technique with two components, it h
 
 Probably because these are \textit{dummy} dimensions, this depiction is not very meaningful to look at with the naked eye, but it does give insight into how the DBSCAN worked. In fact, the different colors with which the points are represented represent the different clusters generated. Instead, the size of the dot distinguishes \textbf{core points} from \textbf{non-core points}. Finally, the small black dots represent the \textbf{outliers} highlighted by the algorithm.
 
+The full implementation code of PCA technique is in appendix \ref{app:pca}.
 
-\subsection{Features importance}
+\clearpage
+
+\section{Features importance}
 \label{sec:testing-importance}
 
-As described in the \ref{sec:importance} section, a key step was to analyze the feature importance for each model after DBSCAN implementation thanks to logistic regression.
+As described in the \ref{sec:importance} section, a key step was to analyze the feature importance for each model after DBSCAN implementation by the use of the logistic regression.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=13cm]{Images/3/importance.png}
-    \caption{Feature importance classification for Cluster \#1}
+    \includegraphics[width=15cm]{Images/3/importance.png}
+    \caption{Feature importance classification in Cluster \#4}
 \end{figure}
 
-By having a graph like this for each cluster, it was possible to understand overall which features are most important for the purpose of classifying outliers.
+The plot is a graphical representation of the importance for each feature in a cluster. It helps us to have an idea of features that the most contributed during the classification of a point. In the specific example we can observe how the \textbf{Draught Relative Standard Deviation} contributed in a considerable way, followed by the \textbf{Extra Traveled Distance} and the \textbf{Underway using engine time percentage} features.
 
 \clearpage
-\subsection{Anomaly 1 - Extra distance}
+
+\section{Anomaly 1 - Extra distance}
 \label{sec:anomaly-1}
 
 \begin{itemize}
@@ -122,7 +126,8 @@ An abnormal number in this feature could mean that the voyage has experienced so
 \end{figure}
 
 \clearpage
-\subsection{Anomaly 2 - Draught relative standard deviation}
+
+\section{Anomaly 2 - Draught relative standard deviation}
 \label{sec:anomaly-2}
 
 \begin{itemize}
@@ -150,7 +155,8 @@ Since the dataset had different types of seagoing vessels with different sizes, 
 A high value of this feature means that the draught has fluctuated significantly during the distance travelled, and thus a fault may have occurred, or that the ship has unexpectedly varied the weight of its cargo. Further manual and individual analysis could be performed with information not included in the AIS to find out if the cargo is an illicit cargo.
 
 \clearpage
-\subsection{Anomaly 3 - Underway using engine percentage}
+
+\section{Anomaly 3 - Underway using engine percentage}
 \label{sec:anomaly-3}
 
 \\

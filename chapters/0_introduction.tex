@@ -1,10 +1,16 @@
 \chapter*{Introduction}
 \label{ch:introduction}
 
-The work presented in this paper is related to the ARCOS project and aims to identify potential anomalies in the routes of maritime transport in the Arctic region.
+Maritime transport has always been considered the most effective and widespread means of transferring substantial cargoes of goods in terms of size and weight over long distances. Since it constitutes 90\% of the world's trade \cite{trasporto_marittimo}, security is one of the most discussed aspects, and recently an intense research activity has concerned this field in recent times. 
+
+In this context, more and more agencies are deploying control algorithms that exploit artificial intelligence and machine learning techniques in order to monitor maritime voyages.
+
+The work presented in this paper is related to the ARCOS (Arctic Observatory for Copernicus SEA) project and aims to identify potential anomalies in the routes of maritime transport in the Arctic region.
+
+These data contain messages that comply with the Automatic Identification System (AIS) standard, which is crucial for ensuring the safety of maritime operations. The system works with numerous sensors on board and a transceiver that sends the data - at a frequency of the order of minutes - to orbiting satellites (S-AIS messages).
 
 The chapter \ref{ch:stateOfTheArt} gives an overview of the background regarding the ARCOS project and its goals, describes the AIS maritime messaging standard with a focus on satellite messaging (S- AIS), and also a description of the anomaly detection techniques currently in use with a focus on DBSCAN, which will be used to cluster trips.
 
-The chapter \ref{ch:methodology} contains all the methodology that has been used, starting with the raw AIS data, moving through data cleaning techniques, and ending with the generation of trip entities using a logical clustering algorithm. It continues with the selection and computation of trip features for analysis (features engineering) and the implementation of the DBSCAN clustering algorithm. Finally, the methodology includes data analysis techniques useful for understanding why some trips are considered outliers and which ones are significant or not.
+The chapter \ref{ch:methodology} contains all the methodology that has been used, starting with the raw AIS data, moving through data cleaning techniques, and proceeding with the generation of trip entities using a logical-grouping algorithm. It continues with the selection and computation of trip features for analysis (features engineering) and the implementation of the DBSCAN clustering algorithm. Finally, the methodology includes data analysis techniques useful for understanding why some trips are considered outliers and which ones are significant from a statistical point of view.
 
 The chapter \ref{ch:testing} describes the results obtained on a dataset containing more than 95 million messages trying to allow an interpretation of the most relevant anomalies.
